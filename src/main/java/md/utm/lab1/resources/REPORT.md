@@ -2,7 +2,7 @@
 
 ### Course: Formal Languages & Finite Automata
 ### Author: Timur Cravțov
-#### Group: FAF-231
+### Group: FAF-231
 
 ----
 
@@ -12,8 +12,8 @@ If needed, but it should be written by the author in her/his words.
 
 ## Objectives:
 
-* First objective.
-* ...
+- Getting familiar with notions of alphabet, grammar
+- 
 
 
 ## Implementation description
