@@ -53,9 +53,9 @@ public class Main {
         System.out.println("\n-----5 generated words-------\n" + words);
 
 
-        DFiniteAutomaton dFiniteAutomaton = labOneGrammar.toFiniteAutomation();
+        FiniteAutomaton finiteAutomaton = labOneGrammar.toFiniteAutomation();
 
-        System.out.println(dFiniteAutomaton);
+        System.out.println(finiteAutomaton);
 
         System.out.println("\n----------automation generation------\n");
 
@@ -65,8 +65,8 @@ public class Main {
         String testString = "acaaaaababaaaaaaaaaaaaaabababbac";
         String randomString = labOneGrammar.generateRandomString(false);
 
-        System.out.println(STR."The verdict upon rangom generated string (should be always true) \{randomString} is : \{dFiniteAutomaton.belongsToAutomation(llf.getLetterListFromString(randomString))}");
+        System.out.println(STR."The verdict upon rangom generated string (should be always true) \{randomString} is : \{finiteAutomaton.belongsToAutomation(llf.getLetterListFromString(randomString))}");
 
-        System.out.println(STR."The verdict upon string \{testString} is : \{dFiniteAutomaton.belongsToAutomation(llf.getLetterListFromString(testString))}");
+        System.out.println(STR."The verdict upon string \{testString} is : \{finiteAutomaton.belongsToAutomation(llf.getLetterListFromString(testString))}");
     }
 }

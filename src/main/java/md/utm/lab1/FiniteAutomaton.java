@@ -3,7 +3,7 @@ package md.utm.lab1;
 import java.util.List;
 import java.util.Set;
 
-public class DFiniteAutomaton {
+public class FiniteAutomaton {
 
     private final Set<State> Q;
     private final Set<AlphabetSymbol> sigmaAlphabet; // Alphabet symbols
@@ -11,7 +11,8 @@ public class DFiniteAutomaton {
     private final State q0;
     private final State F;
 
-    public DFiniteAutomaton(Set<State> Q, Set<AlphabetSymbol> sigmaAlphabet, Set<Transition> deltaTransitions, State q0, State F) {
+
+    public FiniteAutomaton(Set<State> Q, Set<AlphabetSymbol> sigmaAlphabet, Set<Transition> deltaTransitions, State q0, State F) {
         this.Q = Q;
         this.q0 = q0;
         this.sigmaAlphabet = sigmaAlphabet;

@@ -53,7 +53,7 @@ public class Grammar {
         return true;
     }
 
-    public DFiniteAutomaton toFiniteAutomation() {
+    public FiniteAutomaton toFiniteAutomation() {
 
         if (!isRegular()) {
             throw new RuntimeException("The grammar is not regular, can't create finite automata");
@@ -76,7 +76,7 @@ public class Grammar {
         Set<AlphabetSymbol> alphabet = new HashSet<>(V_T);
         states.add(Letter.F);
 
-        return new DFiniteAutomaton(states, alphabet, delta, S, Letter.F);
+        return new FiniteAutomaton(states, alphabet, delta, S, Letter.F);
     }
 
     public String toString() {

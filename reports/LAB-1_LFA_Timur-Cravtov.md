@@ -213,12 +213,11 @@ public Transition(State from, AlphabetSymbol label, State to) {
 }
 ```
 
-Going back to `Grammar`, this is how to convert it to `DFiniteAutomata`. Since the constuctor uses interfaces of `Set<State>`, `Set<Letter>` works too. 
-
+Going back to `Grammar`, this is how to convert it to `FiniteAutomata`. Since the constuctor uses interfaces of `Set<State>`, `Set<Letter>` works too. 
 
 
 ```java
-public DFiniteAutomaton toFiniteAutomation() {
+public FiniteAutomaton toFiniteAutomation() {
 
     if (!isRegular()) {
         throw new RuntimeException("The grammar is not regular, can't create finite automata");
@@ -241,7 +240,7 @@ public DFiniteAutomaton toFiniteAutomation() {
     Set<AlphabetSymbol> alphabet = new HashSet<>(V_T);
     states.add(Letter.F);
 
-    return new DFiniteAutomaton(states, alphabet, delta, S, Letter.F);
+    return new FiniteAutomaton(states, alphabet, delta, S, Letter.F);
 }
 ```
 
@@ -290,7 +289,7 @@ System.out.println("\n**5 generated words**\n" + words);
 
 // And finally, `toFiniteAutomation` call and string test
 
-DFiniteAutomaton DFiniteAutomaton = labOneGrammar.toFiniteAutomation();
+FiniteAutomaton DFiniteAutomaton = labOneGrammar.toFiniteAutomation();
 System.out.println("\n**Automaton Test**\n");
 
 String testString = "acacaababababbcacacacaabccccccccaaaac";
