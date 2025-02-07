@@ -2,7 +2,13 @@ package md.utm.lab1;
 
 import java.util.Objects;
 
-public class Letter {
+public class Letter implements State, AlphabetSymbol {
+
+//    public static final Letter epsilon = new Letter("ε", true);
+
+    public static final Letter epsilon = new Letter("", true);
+    public static final Letter F = new Letter("{final}", false);
+
     private final String letter;
     private final boolean isTerminal;
 
@@ -34,4 +40,15 @@ public class Letter {
     public String toString() {
         return letter;
     }
+
+    @Override
+    public String getStateName() {
+        return getLetter();
+    }
+
+    @Override
+    public String getAlphabetSymbolName() {
+        return getLetter();
+    }
 }
+

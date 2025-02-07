@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+
 public class Grammar {
 
     // non-terminal letters
@@ -21,6 +22,7 @@ public class Grammar {
 
     public Grammar(Set<Letter> V_N, Set<Letter> V_T, Set<DeriveRule> productions, Letter S) {
 
+
         if (Stream.of(V_T, V_N, S, productions).anyMatch(Objects::isNull)) {
             throw new RuntimeException("V_T, V_N, S and P should not be null");
         }
@@ -31,8 +33,54 @@ public class Grammar {
         this.S = S;
     }
 
-    public FiniteAutomaton toFiniteAutomation() {
-        return null;
+    public boolean isRegular() {
+        for (DeriveRule rule : P) {
+            List<Letter> from = rule.getFrom();
+            List<Letter> to = rule.getTo();
+
+            if (from.size() != 1 || !V_N.contains(from.getFirst())) {
+                return false;
+            }
+
+            if (to.isEmpty() || !V_T.contains(to.get(0))) {
+                return false;
+            }
+
+            if (to.size() > 1 && (!V_N.contains(to.get(1)) || to.size() > 2)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public DFiniteAutomaton toFiniteAutomation() {
+
+        if (!isRegular()) {
+            throw new RuntimeException("The grammar is not regular, can't create finite automata");
+        }
+
+        Set<Transition> delta = new HashSet<>();
+
+        // transform rules in transitions
+        P.forEach(rule -> delta.add(
+                new Transition(
+                        rule.getFrom().getFirst(),
+                        rule.getTo().getFirst(),
+                        rule.getTo().size() == 2 ? rule.getTo().get(1) : Letter.F
+                )));
+
+        System.out.println(delta);
+
+        // add to states all the non-terminal plus final
+        Set<State> states = new HashSet<>(V_N);
+        Set<AlphabetSymbol> alphabet = new HashSet<>(V_T);
+        states.add(Letter.F);
+
+        return new DFiniteAutomaton(states, alphabet, delta, S, Letter.F);
+    }
+
+    public String toString() {
+        return STR."V_N : \{V_N.toString()}\nV_T: \{V_T}\nS: \{S}\nP:\{P}";
     }
 
 
@@ -50,8 +98,12 @@ public class Grammar {
      * @return generated string
      */
     public String generateRandomString(boolean showProcess) {
-        System.out.println(STR."1. \{S}");
+
         int i = 0;
+
+        if (showProcess) {
+            System.out.println(STR."1. \{S}");
+        }
 
         List<Letter> word = new ArrayList<>(List.of(S));
         Random random = new Random();
@@ -94,8 +146,6 @@ public class Grammar {
             }
         }
 
-        return word.stream()
-                .map(Letter::getLetter)
-                .collect(Collectors.joining());
+        return Word.makeString(word);
     }
 }

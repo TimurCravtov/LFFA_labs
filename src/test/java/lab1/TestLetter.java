@@ -19,6 +19,4 @@ public class TestLetter {
         assertEquals(set.size(), 1);
     }
 
-
-
 }
