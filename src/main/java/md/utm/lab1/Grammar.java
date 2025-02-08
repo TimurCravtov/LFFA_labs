@@ -76,7 +76,7 @@ public class Grammar {
         Set<AlphabetSymbol> alphabet = new HashSet<>(V_T);
         states.add(Letter.F);
 
-        return new FiniteAutomaton(states, alphabet, delta, S, Letter.F);
+        return new FiniteAutomaton(states, alphabet, delta, S, Set.of(Letter.F));
     }
 
     public String toString() {

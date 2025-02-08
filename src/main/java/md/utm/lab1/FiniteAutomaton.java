@@ -9,10 +9,10 @@ public class FiniteAutomaton {
     private final Set<AlphabetSymbol> sigmaAlphabet; // Alphabet symbols
     private final Set<Transition> deltaTransitions;
     private final State q0;
-    private final State F;
+    private final Set<State> F;
 
 
-    public FiniteAutomaton(Set<State> Q, Set<AlphabetSymbol> sigmaAlphabet, Set<Transition> deltaTransitions, State q0, State F) {
+    public FiniteAutomaton(Set<State> Q, Set<AlphabetSymbol> sigmaAlphabet, Set<Transition> deltaTransitions, State q0, Set<State> F) {
         this.Q = Q;
         this.q0 = q0;
         this.sigmaAlphabet = sigmaAlphabet;
@@ -43,6 +43,6 @@ public class FiniteAutomaton {
             }
         }
 
-        return currentState.equals(F);
+        return F.contains(currentState);
     }
 }

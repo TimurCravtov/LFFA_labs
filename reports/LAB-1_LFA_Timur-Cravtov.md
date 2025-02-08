@@ -189,12 +189,12 @@ public static String makeString(List<Letter> word) {
 }
 ```
 
-Before we go to `toFiniteAutomation()` method, first I'll describe the `DFiniteAutomation` methods.
+Before we go to `toFiniteAutomation()` method, first I'll describe the `FiniteAutomation` methods.
 
 The constructor is straightforward.:
 
 ```java
-public DFiniteAutomaton(Set<State> Q, Set<AlphabetSymbol> sigmaAlphabet, Set<Transition> deltaTransitions, State q0, State F) {
+public FiniteAutomaton(Set<State> Q, Set<AlphabetSymbol> sigmaAlphabet, Set<Transition> deltaTransitions, State q0, Set<State> F) {
         this.Q = Q;
         this.q0 = q0;
         this.sigmaAlphabet = sigmaAlphabet;
@@ -240,7 +240,7 @@ public FiniteAutomaton toFiniteAutomation() {
     Set<AlphabetSymbol> alphabet = new HashSet<>(V_T);
     states.add(Letter.F);
 
-    return new FiniteAutomaton(states, alphabet, delta, S, Letter.F);
+    return new FiniteAutomaton(states, alphabet, delta, S, Set.of(Letter.F));
 }
 ```
 
@@ -289,7 +289,7 @@ System.out.println("\n**5 generated words**\n" + words);
 
 // And finally, `toFiniteAutomation` call and string test
 
-FiniteAutomaton DFiniteAutomaton = labOneGrammar.toFiniteAutomation();
+FiniteAutomaton finiteAutomaton = labOneGrammar.toFiniteAutomation();
 System.out.println("\n**Automaton Test**\n");
 
 String testString = "acacaababababbcacacacaabccccccccaaaac";
