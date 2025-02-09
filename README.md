@@ -2,7 +2,7 @@
 
 This repository contains lab work for the <u>Formal Languages & Finite Automata</u> course at the *Technical University of Moldova*. 
 
-The list of all repors are avaliable at [reports folder](reports). Also the links below references them.
+The list of all repors are avaliable at [reports folder](reports). The links below references them.
 
 ###  Contents
 

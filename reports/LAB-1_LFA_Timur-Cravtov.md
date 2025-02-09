@@ -7,7 +7,7 @@
 ----
 
 ## Theory
-Grammar is a 4 tuple:
+Grammar [^1] is a 4 tuple:
 1) V_N - set of non-terminal letters
 2) V_T - set of terminal letter
 3) P - set of derive rules
@@ -16,7 +16,7 @@ Grammar is a 4 tuple:
 A grammar with rules in form:
 A → aA or A → a is called left-regular grammar can be used to create a finite automata.
 
-Finite automata is a 5 - tuple:
+Finite automata [^2] is a 5 - tuple:
 1) Q - set of all possible states, including final
 2) Alphabet (denotes as capital sigma letter) - set of Alphabet Symbols
 3) Transitions (denoted as delta letter) - set of all transition functions, which maps State + letter to other state (or set of states in NFA)
@@ -282,6 +282,8 @@ To sum up, the objectives were reached, and the code structure is easy to use fo
 
 ## References
 
-Regular grammar, Wikipedia - https://en.wikipedia.org/wiki/Regular_grammar
+[^1]: Regular grammar, Wikipedia - https://en.wikipedia.org/wiki/Regular_grammar
 
-Introduction to Finite automate, geeksforgeeks - https://www.geeksforgeeks.org/introduction-of-finite-automata/
+[^2] Introduction to Finite automate, geeksforgeeks - https://www.geeksforgeeks.org/introduction-of-finite-automata/
+
+[^3] Lecture notes
