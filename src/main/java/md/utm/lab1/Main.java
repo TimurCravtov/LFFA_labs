@@ -3,40 +3,31 @@ package md.utm.lab1;
 import java.util.*;
 
 public class Main {
-
-
     public static void main(String[] args) {
 
-        /* *************************************
-            PART 1: Generating the grammar,
-            using alphabet, productions, etc
-        ************************************* */
-
-        LocalLetterFactory llf = new LocalLetterFactory();
-
         Set<Letter> V_N = Set.of(
-                llf.create("S", false),
-                llf.create("B", false),
-                llf.create("D", false)
+                new Letter("S"),
+                new Letter("B"),
+                new Letter("D")
         );
 
         Set<Letter> V_T = Set.of(
-                llf.create("a", true),
-                llf.create("b", true),
-                llf.create("c", true)
+                new Letter("a"),
+                new Letter("b"),
+                new Letter("c")
         );
 
         Set<DeriveRule> P = Set.of(
-                new DeriveRule(llf.get("S"), List.of(llf.get("a"), llf.get("B"))),
-                new DeriveRule(llf.get("B"), List.of(llf.get("a"), llf.get("D"))),
-                new DeriveRule(llf.get("B"), List.of(llf.get("b"), llf.get("B"))),
-                new DeriveRule(llf.get("D"), List.of(llf.get("a"), llf.get("D"))),
-                new DeriveRule(llf.get("D"), List.of(llf.get("b"), llf.get("S"))),
-                new DeriveRule(llf.get("B"), List.of(llf.get("c"), llf.get("S"))),
-                new DeriveRule(llf.get("D"), llf.get("c"))
+                new DeriveRule(new Letter("S"), List.of(new Letter("a"), new Letter("B"))),
+                new DeriveRule(new Letter("B"), List.of(new Letter("a"), new Letter("D"))),
+                new DeriveRule(new Letter("B"), List.of(new Letter("b"), new Letter("B"))),
+                new DeriveRule(new Letter("D"), List.of(new Letter("a"), new Letter("D"))),
+                new DeriveRule(new Letter("D"), List.of(new Letter("b"), new Letter("S"))),
+                new DeriveRule(new Letter("B"), List.of(new Letter("c"), new Letter("S"))),
+                new DeriveRule(new Letter("D"), new Letter("c"))
         );
 
-        Grammar labOneGrammar = new Grammar(V_N, V_T, P, llf.get("S"));
+        Grammar labOneGrammar = new Grammar(V_N, V_T, P, new Letter("S"));
 
         System.out.println(STR."-------The grammar-------\n\n\{labOneGrammar}");
 
@@ -52,21 +43,16 @@ public class Main {
         }
         System.out.println("\n-----5 generated words-------\n" + words);
 
-
         FiniteAutomaton finiteAutomaton = labOneGrammar.toFiniteAutomation();
 
         System.out.println(finiteAutomaton);
+        System.out.println("\n----------Automaton generation------\n");
 
-        System.out.println("\n----------automation generation------\n");
-
-
-
-
-        String testString = "acaaaaababaaaaaaaaaaaaaabababbac";
+        String testString = "acacacacaac";
         String randomString = labOneGrammar.generateRandomString(false);
 
-        System.out.println(STR."The verdict upon rangom generated string (should be always true) \{randomString} is : \{finiteAutomaton.belongsToAutomation(llf.getLetterListFromString(randomString))}");
+        System.out.println(STR."The verdict upon randomly generated string (should be always true) \{randomString} is : \{finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(randomString))}");
 
-        System.out.println(STR."The verdict upon string \{testString} is : \{finiteAutomaton.belongsToAutomation(llf.getLetterListFromString(testString))}");
+        System.out.println(STR."The verdict upon string \{testString} is : \{finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(testString))}");
     }
 }

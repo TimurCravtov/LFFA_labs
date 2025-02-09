@@ -108,13 +108,13 @@ public class Grammar {
         List<Letter> word = new ArrayList<>(List.of(S));
         Random random = new Random();
 
-        while (word.stream().anyMatch(letter -> !letter.isTerminal())) {
+        while (word.stream().anyMatch(V_N::contains)) {
 
             List<Letter> nextGenWord = new ArrayList<>(word);
-            List<Letter> finalWord = word; // intelij says you can't use not final in lambda :(
+            List<Letter> finalWord = word;
 
-            List<Integer> nonTerminalIndices = IntStream.range(0, word.size())
-                    .filter(index -> !finalWord.get(index).isTerminal())
+            List<Integer> nonTerminalIndices = IntStream.range(0, finalWord.size())
+                    .filter(index -> V_N.contains(finalWord.get(index)))
                     .boxed()
                     .toList();
 

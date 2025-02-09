@@ -48,7 +48,6 @@ Since the letter is actually both a state and alphabet symbol, it implements the
 // Letter class
 public class Letter implements State, AlphabetSymbol {
     private final String letter;
-    private final boolean isTerminal;
     ...
 }
 ```
@@ -63,43 +62,7 @@ public class DeriveRule {
 }
 ```
 
-3) `LocalLetterFactory` - we need this for same letter references in different parts of program with no need for using variables.
-```java
-package md.utm.lab1;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class LocalLetterFactory {
-    private final Map<String, Letter> letters = new HashMap<>();
-
-    public Letter create(String name, boolean isTerminal) {
-        return letters.computeIfAbsent(name, k -> new Letter(name, isTerminal));
-    }
-
-    public Letter get(String name) {
-
-        Letter l = letters.get(name);
-        if (l == null) {
-            throw new RuntimeException(STR."Letter \{name} does not exist");
-        }
-        return l;
-    }
-
-    public List<Letter> getLetterListFromString(String s) {
-        List<Letter> letterList = new ArrayList<>();
-
-        for (char ch : s.toCharArray()) {
-            letterList.add(get(String.valueOf(ch)));
-        }
-        return letterList;
-    }
-}
-```
-
-4) Interfaces - `State` and `Alphabet Symbol`. Used for dependency inversion principle. Both have methods `String get...Name()`
+3) Interfaces - `State` and `Alphabet Symbol`. Used for dependency inversion principle. Both have methods `String get...Name()`
 
 ### Core classes 
 Now, the `Grammar` class. In constuctir we pass all the needed state variables (V_N, V_T, P, S) which are not null;
@@ -127,8 +90,6 @@ Next, the `generateRandomWord()` is defined. The process of generation looks the
 6) The final string is generated (using `Word.makeString(List<Letter>)` method).
 
 ```java
-import md.utm.lab1.Word;
-
 public String generateRandomString(boolean showProcess) {
 
     int i = 0;
@@ -140,13 +101,13 @@ public String generateRandomString(boolean showProcess) {
     List<Letter> word = new ArrayList<>(List.of(S));
     Random random = new Random();
 
-    while (word.stream().anyMatch(letter -> !letter.isTerminal())) {
+    while (word.stream().anyMatch(V_N::contains)) {
 
         List<Letter> nextGenWord = new ArrayList<>(word);
-        List<Letter> finalWord = word; // intelij says you can't use not final in lambda :(
+        List<Letter> finalWord = word;
 
-        List<Integer> nonTerminalIndices = IntStream.range(0, word.size())
-                .filter(index -> !finalWord.get(index).isTerminal())
+        List<Integer> nonTerminalIndices = IntStream.range(0, finalWord.size())
+                .filter(index -> V_N.contains(finalWord.get(index)))
                 .boxed()
                 .toList();
 
@@ -164,7 +125,8 @@ public String generateRandomString(boolean showProcess) {
 
                 nextGenWord.remove(randomIndex);
                 nextGenWord.addAll(randomIndex, selectedRule.getTo());
-            } else {
+            }
+            else {
                 throw new RuntimeException(STR."Couldn't find right rule for letter \{randomLetter} adjust your productions or alphabet");
             }
         }
@@ -179,7 +141,6 @@ public String generateRandomString(boolean showProcess) {
 
     return Word.makeString(word);
 }
-
 // Word.java
 
 public static String makeString(List<Letter> word) {
@@ -249,31 +210,29 @@ Now, let's generate 5 random strings and see if a string belongs to finite autom
 ```java
 // This part generates grammar
 
-LocalLetterFactory llf = new LocalLetterFactory();
-
 Set<Letter> V_N = Set.of(
-        llf.create("S", false),
-        llf.create("B", false),
-        llf.create("D", false)
+        new Letter("S"),
+        new Letter("B"),
+        new Letter("D")
 );
 
 Set<Letter> V_T = Set.of(
-        llf.create("a", true),
-        llf.create("b", true),
-        llf.create("c", true)
+        new Letter("a"),
+        new Letter("b"),
+        new Letter("c")
 );
 
 Set<DeriveRule> P = Set.of(
-        new DeriveRule(llf.get("S"), List.of(llf.get("a"), llf.get("B"))),
-        new DeriveRule(llf.get("B"), List.of(llf.get("a"), llf.get("D"))),
-        new DeriveRule(llf.get("B"), List.of(llf.get("b"), llf.get("B"))),
-        new DeriveRule(llf.get("D"), List.of(llf.get("a"), llf.get("D"))),
-        new DeriveRule(llf.get("D"), List.of(llf.get("b"), llf.get("S"))),
-        new DeriveRule(llf.get("B"), List.of(llf.get("c"), llf.get("S"))),
-        new DeriveRule(llf.get("D"), llf.get("c"))
+        new DeriveRule(new Letter("S"), List.of(new Letter("a"), new Letter("B"))),
+        new DeriveRule(new Letter("B"), List.of(new Letter("a"), new Letter("D"))),
+        new DeriveRule(new Letter("B"), List.of(new Letter("b"), new Letter("B"))),
+        new DeriveRule(new Letter("D"), List.of(new Letter("a"), new Letter("D"))),
+        new DeriveRule(new Letter("D"), List.of(new Letter("b"), new Letter("S"))),
+        new DeriveRule(new Letter("B"), List.of(new Letter("c"), new Letter("S"))),
+        new DeriveRule(new Letter("D"), new Letter("c"))
 );
 
-Grammar labOneGrammar = new Grammar(V_N, V_T, P, llf.get("S"));
+Grammar labOneGrammar = new Grammar(V_N, V_T, P, new Letter("S"));
 
 // Now, 5 strings generated: 
 
@@ -295,10 +254,9 @@ System.out.println("\n**Automaton Test**\n");
 String testString = "acacaababababbcacacacaabccccccccaaaac";
 String randomString = labOneGrammar.generateRandomString(false);
 
-System.out.println(STR."The verdict upon rangom generated string (should be always true) \{randomString} is : \{DFiniteAutomaton.belongsToAutomation(llf.getLetterListFromString(randomString))}");
+System.out.println(STR."The verdict upon randomly generated string (should be always true) \{randomString} is : \{finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(randomString))}");
 
-System.out.println(STR."The verdict upon string \{testString} is : \{DFiniteAutomaton.belongsToAutomation(llf.getLetterListFromString(testString))}");
-
+System.out.println(STR."The verdict upon string \{testString} is : \{finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(testString))}");
 ```
 
 ## Conclusions / Screenshots / Results
