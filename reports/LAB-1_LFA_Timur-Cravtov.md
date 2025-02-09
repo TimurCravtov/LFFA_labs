@@ -274,8 +274,14 @@ System.out.println(STR."The verdict upon string \{testString} is : \{finiteAutom
 
 <img src="screenshots/lab1/verification.png">
 
+### Conclusions
+
+During this laboratory work, I implemented two main classes from the theory of finite automata: `Grammar`, `FiniteAutomation` together with the helper classes. For `Grammar` class I added method `toFiniteAutomation`. Finally, the method `belongsToAutomation(List<AlphabetSymbol)`, defined in `FiniteAutomation` class allows validating the string, if it belongs to automation (and equivalent Grammar).
+
+To sum up, the objectives were reached, and the code structure is easy to use for other modifications and upgrades since it's built on Dependency Inversion principle ad uses abstract concept of State and Alphabet Symbol rather than strict string implementation. 
 
 ## References
 
 Regular grammar, Wikipedia - https://en.wikipedia.org/wiki/Regular_grammar
+
 Introduction to Finite automate, geeksforgeeks - https://www.geeksforgeeks.org/introduction-of-finite-automata/
