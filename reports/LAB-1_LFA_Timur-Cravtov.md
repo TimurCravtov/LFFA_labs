@@ -91,21 +91,11 @@ Next, the `generateRandomWord()` is defined. The process of generation looks the
 
 ```java
 public String generateRandomString(boolean showProcess) {
-
-    int i = 0;
-
-    if (showProcess) {
-        System.out.println(STR."1. \{S}");
-    }
-
-    List<Letter> word = new ArrayList<>(List.of(S));
-    Random random = new Random();
-
+    
+    ... 
+    
     while (word.stream().anyMatch(V_N::contains)) {
-
-        List<Letter> nextGenWord = new ArrayList<>(word);
-        List<Letter> finalWord = word;
-
+        
         List<Integer> nonTerminalIndices = IntStream.range(0, finalWord.size())
                 .filter(index -> V_N.contains(finalWord.get(index)))
                 .boxed()
@@ -113,13 +103,10 @@ public String generateRandomString(boolean showProcess) {
 
         if (!nonTerminalIndices.isEmpty()) {
 
-            int randomIndex = nonTerminalIndices.get(random.nextInt(nonTerminalIndices.size()));
+            ... // fining random index of non-terminal symbol
+            
             Letter randomLetter = word.get(randomIndex);
-
-            List<DeriveRule> possibleRules = P.stream()
-                    .filter(rule -> rule.getFrom().getFirst().equals(randomLetter))
-                    .toList();
-
+            
             if (!possibleRules.isEmpty()) {
                 DeriveRule selectedRule = possibleRules.get(random.nextInt(possibleRules.size()));
 
@@ -131,23 +118,11 @@ public String generateRandomString(boolean showProcess) {
             }
         }
 
-        word = nextGenWord;
-        i++;
-
-        if (showProcess) {
-            System.out.println(STR."\{i}. \{word.stream().map(Letter::getLetter).collect(Collectors.joining())}");
-        }
-    }
-
+        ...
+        
     return Word.makeString(word);
 }
 // Word.java
-
-public static String makeString(List<Letter> word) {
-    return word.stream()
-        .map(Letter::toString)
-        .collect(Collectors.joining());
-}
 ```
 
 Before we go to `toFiniteAutomation()` method, first I'll describe the `FiniteAutomation` methods.
@@ -208,53 +183,27 @@ public FiniteAutomaton toFiniteAutomation() {
 Now, let's generate 5 random strings and see if a string belongs to finite automata. 
 
 ```java
-// This part generates grammar
 
-Set<Letter> V_N = Set.of(
-        new Letter("S"),
-        new Letter("B"),
-        new Letter("D")
-);
-
-Set<Letter> V_T = Set.of(
-        new Letter("a"),
-        new Letter("b"),
-        new Letter("c")
-);
-
-Set<DeriveRule> P = Set.of(
-        new DeriveRule(new Letter("S"), List.of(new Letter("a"), new Letter("B"))),
-        new DeriveRule(new Letter("B"), List.of(new Letter("a"), new Letter("D"))),
-        new DeriveRule(new Letter("B"), List.of(new Letter("b"), new Letter("B"))),
-        new DeriveRule(new Letter("D"), List.of(new Letter("a"), new Letter("D"))),
-        new DeriveRule(new Letter("D"), List.of(new Letter("b"), new Letter("S"))),
-        new DeriveRule(new Letter("B"), List.of(new Letter("c"), new Letter("S"))),
-        new DeriveRule(new Letter("D"), new Letter("c"))
-);
+... // generate sets of productions, letters
 
 Grammar labOneGrammar = new Grammar(V_N, V_T, P, new Letter("S"));
 
 // Now, 5 strings generated: 
 
 Set<String> words = new HashSet<>();
-System.out.println("\n**Generating random strings**\n");
 
 while (words.size() < 5) {
         words.add(labOneGrammar.generateRandomString(true));
 }
+       //  ...
 
-System.out.println("\n**5 generated words**\n" + words);
 
-
-// And finally, `toFiniteAutomation` call and string test
-
+// and string validation
 FiniteAutomaton finiteAutomaton = labOneGrammar.toFiniteAutomation();
-System.out.println("\n**Automaton Test**\n");
 
 String testString = "acacaababababbcacacacaabccccccccaaaac";
-String randomString = labOneGrammar.generateRandomString(false);
 
-System.out.println(STR."The verdict upon randomly generated string (should be always true) \{randomString} is : \{finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(randomString))}");
+// ...
 
 System.out.println(STR."The verdict upon string \{testString} is : \{finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(testString))}");
 ```
@@ -276,9 +225,17 @@ System.out.println(STR."The verdict upon string \{testString} is : \{finiteAutom
 
 ### Conclusions
 
-During this laboratory work, I implemented two main classes from the theory of finite automata: `Grammar`, `FiniteAutomation` together with the helper classes. For `Grammar` class I added method `toFiniteAutomation`. Finally, the method `belongsToAutomation(List<AlphabetSymbol)`, defined in `FiniteAutomation` class allows validating the string, if it belongs to automation (and equivalent Grammar).
+During this laboratory work, I successfully implemented two fundamental components of finite automata theory: `Grammar` and `FiniteAutomaton`, along with the necessary helper classes. The `Grammar` class includes a method `toFiniteAutomation()`, which transforms a given left-regular grammar into a finite automaton. The `FiniteAutomaton` class features a `belongsToAutomation(List<AlphabetSymbol>)` method, allowing validation of whether a string belongs to the generated automaton (and its equivalent grammar).
 
-To sum up, the objectives were reached, and the code structure is easy to use for other modifications and upgrades since it's built on Dependency Inversion principle ad uses abstract concept of State and Alphabet Symbol rather than strict string implementation. 
+Through this implementation, I deepened my understanding of the equivalence between regular grammars and finite automata, as well as the algorithmic process of transformation. The use of the Dependency Inversion Principle ensured flexibility and reusability by defining abstract interfaces for `State` and `AlphabetSymbol`, making the system adaptable for further modifications or expansions.
+
+The objectives set at the beginning were successfully achieved. The implemented system allows for:
+
+- The generation of words based on a given grammar,
+- The conversion of regular grammar into a finite automaton,
+- The validation of strings against the constructed automaton.
+
+Possible future improvements include extending support for non-regular grammars, and integrating a visual representation of the generated automaton for better understanding. Overall, this work provides a solid foundation for further explorations in formal languages and automata theory.
 
 ## References
 
