@@ -7,7 +7,7 @@ public class Letter implements State, AlphabetSymbol {
 //    public static final Letter epsilon = new Letter("ε", true);
 
     public static final Letter epsilon = new Letter("");
-    public static final Letter F = new Letter("{final}");
+    public static final Letter F = new Letter("{f}");
 
     private final String letter;
 

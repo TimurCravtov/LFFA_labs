@@ -22,7 +22,7 @@ public class Grammar {
 
     public Grammar(Set<Letter> V_N, Set<Letter> V_T, Set<DeriveRule> productions, Letter S) {
 
-
+        // todo: check if in productions 'from' has at least one non-terminal symbol
         if (Stream.of(V_T, V_N, S, productions).anyMatch(Objects::isNull)) {
             throw new RuntimeException("V_T, V_N, S and P should not be null");
         }

@@ -48,7 +48,7 @@ public class Main {
         System.out.println(finiteAutomaton);
         System.out.println("\n----------Automaton generation------\n");
 
-        String testString = "acacacacaac";
+        String testString = "acc";
         String randomString = labOneGrammar.generateRandomString(false);
 
         System.out.println(STR."The verdict upon randomly generated string (should be always true) \{randomString} is : \{finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(randomString))}");

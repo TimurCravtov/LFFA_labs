@@ -1,5 +1,7 @@
 package md.utm.lab1;
 
+import md.utm.lab2.VisualisationService;
+
 import java.util.List;
 import java.util.Set;
 
@@ -25,6 +27,10 @@ public class FiniteAutomaton {
         return STR."States: \{Q}\nAlphabet: \n\{sigmaAlphabet}\ndelta: \{deltaTransitions}\nInitial state: \{q0}\nFinal state: \{F}";
     }
 
+    public void visualize(String outputDirectory) {
+        VisualisationService.visualise(this, outputDirectory);
+    }
+
     public boolean belongsToAutomation(List<? extends AlphabetSymbol> word) {
         State currentState = q0;
 
@@ -44,5 +50,25 @@ public class FiniteAutomaton {
         }
 
         return F.contains(currentState);
+    }
+
+    public Set<State> getQ() {
+        return Q;
+    }
+
+    public Set<AlphabetSymbol> getSigmaAlphabet() {
+        return sigmaAlphabet;
+    }
+
+    public Set<Transition> getDeltaTransitions() {
+        return deltaTransitions;
+    }
+
+    public State getQ0() {
+        return q0;
+    }
+
+    public Set<State> getF() {
+        return F;
     }
 }

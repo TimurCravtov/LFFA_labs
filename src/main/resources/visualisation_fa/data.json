@@ -1,0 +1,57 @@
+{
+    "transitions": [
+        {
+            "from": "D",
+            "to": "D",
+            "label": "a"
+        },
+        {
+            "from": "B",
+            "to": "B",
+            "label": "b"
+        },
+        {
+            "from": "D",
+            "to": "S",
+            "label": "b"
+        },
+        {
+            "from": "B",
+            "to": "D",
+            "label": "a"
+        },
+        {
+            "from": "D",
+            "to": "{f}",
+            "label": "c"
+        },
+        {
+            "from": "S",
+            "to": "B",
+            "label": "a"
+        },
+        {
+            "from": "B",
+            "to": "S",
+            "label": "c"
+        }
+    ],
+    "states": [
+        {
+            "label": "{f}",
+            "type": "final"
+        },
+        {
+            "label": "B",
+            "type": "general"
+        },
+        {
+            "label": "S",
+            "type": "start"
+        },
+        {
+            "label": "D",
+            "type": "general"
+        }
+    ]
+}
