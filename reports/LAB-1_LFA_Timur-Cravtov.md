@@ -1,4 +1,4 @@
-# The title of the work
+# Intro to formal languages. Regular grammars. Finite Automata.
 
 ### Course: Formal Languages & Finite Automata
 ### Author: Timur Cravțov
@@ -241,6 +241,6 @@ Possible future improvements include extending support for non-regular grammars,
 
 [^1]: Regular grammar, Wikipedia - https://en.wikipedia.org/wiki/Regular_grammar
 
-[^2] Introduction to Finite automate, geeksforgeeks - https://www.geeksforgeeks.org/introduction-of-finite-automata/
+[^2]: Introduction to Finite automate, geeksforgeeks - https://www.geeksforgeeks.org/introduction-of-finite-automata/
 
-[^3] Lecture notes
+[^3]: Lecture notes
