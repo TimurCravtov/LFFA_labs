@@ -22,9 +22,22 @@ public class Grammar {
 
     public Grammar(Set<Letter> V_N, Set<Letter> V_T, Set<DeriveRule> productions, Letter S) {
 
-        // todo: check if in productions 'from' has at least one non-terminal symbol
+
         if (Stream.of(V_T, V_N, S, productions).anyMatch(Objects::isNull)) {
             throw new RuntimeException("V_T, V_N, S and P should not be null");
+        }
+
+        Set<Letter> total = new HashSet<>(Set.copyOf(V_N));
+        total.addAll(V_T);
+
+        if (total.size() != V_T.size() + V_N.size()) {
+            throw new RuntimeException("V_T and V_N should not have common elements");
+        }
+
+//        Collections.disjoint(V_N, productions.stream().map(rule -> rule.getFrom().stream().toList()));
+
+        for (DeriveRule rule: productions) {
+            if (rule.getFrom().contains(V_N));
         }
 
         this.V_N = V_N;

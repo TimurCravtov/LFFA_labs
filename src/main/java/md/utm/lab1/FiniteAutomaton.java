@@ -27,8 +27,8 @@ public class FiniteAutomaton {
         return STR."States: \{Q}\nAlphabet: \n\{sigmaAlphabet}\ndelta: \{deltaTransitions}\nInitial state: \{q0}\nFinal state: \{F}";
     }
 
-    public void visualize(String outputDirectory) {
-        VisualisationService.visualise(this, outputDirectory);
+    public void visualize() {
+        VisualisationService.visualise(this);
     }
 
     public boolean belongsToAutomation(List<? extends AlphabetSymbol> word) {

@@ -28,7 +28,7 @@ public class VisualisationService {
         List<CustomTransition> transitions;
     }
 
-    public static void visualise(FiniteAutomaton finiteAutomaton, String outputDir) {
+    public static void visualise(FiniteAutomaton finiteAutomaton) {
         List<CustomState> states = finiteAutomaton.getQ().stream().map(state -> {
             String type;
             boolean isStart = state.equals(finiteAutomaton.getQ0());
@@ -76,7 +76,7 @@ public class VisualisationService {
         visualData.put("transitions", transitionsArray);
 
         try {
-            Files.createDirectories(Path.of(outputDir));
+            Files.createDirectories(Path.of("src/main/resources/visualisation_fa"));
             FileWriter writer = new FileWriter("src/main/resources/visualisation_fa/data.json");
             writer.write(visualData.toString(4));
             writer.close();
@@ -86,7 +86,7 @@ public class VisualisationService {
             Desktop.getDesktop().browse(htmlFile.toURI());
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 }

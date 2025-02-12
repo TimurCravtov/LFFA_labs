@@ -7,7 +7,7 @@
 ----
 
 ## Theory
-Grammar [^1] is a 4 tuple:
+Grammar [^1] [^3] is a 4 tuple:
 1) V_N - set of non-terminal letters
 2) V_T - set of terminal letter
 3) P - set of derive rules
@@ -241,6 +241,7 @@ Possible future improvements include extending support for non-regular grammars,
 
 [^1]: Regular grammar, Wikipedia - https://en.wikipedia.org/wiki/Regular_grammar
 
-[^2]: Introduction to Finite automate, geeksforgeeks - https://www.geeksforgeeks.org/introduction-of-finite-automata/
+[^2]: Introduction to Finite automate, geeksforgeeks -
 
 [^3]: Lecture notes
+
