@@ -37,7 +37,7 @@ public class Transition {
 
     @Override
     public String toString() {
-        return STR."δ(\{from.getStateName()}, \{label.getAlphabetSymbolName()}) = \{to.getStateName()}";
+        return String.format("δ(%s, %s) = %s", from.getStateName(), label.getAlphabetSymbolName(), to.getStateName());
     }
 
 }

@@ -1,5 +1,7 @@
 package md.utm.lab1;
 
+import md.utm.lab2.FiniteAutomataToGrammarService;
+import md.utm.lab2.FiniteAutomationType;
 import md.utm.lab2.VisualisationService;
 
 import java.util.List;
@@ -24,7 +26,10 @@ public class FiniteAutomaton {
 
     @Override
     public String toString() {
-        return STR."States: \{Q}\nAlphabet: \n\{sigmaAlphabet}\ndelta: \{deltaTransitions}\nInitial state: \{q0}\nFinal state: \{F}";
+        return String.format(
+                "States: %s%nAlphabet: %n%s%ndelta: %s%nInitial state: %s%nFinal state: %s",
+                Q, sigmaAlphabet, deltaTransitions, q0, F
+        );
     }
 
     public void visualize() {
@@ -50,6 +55,25 @@ public class FiniteAutomaton {
         }
 
         return F.contains(currentState);
+    }
+
+    public Grammar toGrammar() {
+        return FiniteAutomataToGrammarService.toRegularGrammar(this);
+    }
+
+    public FiniteAutomationType getFiniteAutomationType() {
+        return FiniteAutomationType.NFA;
+    }
+
+    public FiniteAutomaton toDfa() {
+        if (getFiniteAutomationType() == FiniteAutomationType.DFA) {
+            System.out.println("The Finite Automaton is already a NFA. Returning the same automaton.");
+            return this;
+        }
+        else {
+            // implement some logic
+            return null;
+        }
     }
 
     public Set<State> getQ() {

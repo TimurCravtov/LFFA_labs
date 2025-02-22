@@ -29,7 +29,7 @@ public class Main {
 
         Grammar labOneGrammar = new Grammar(V_N, V_T, P, new Letter("S"));
 
-        System.out.println(STR."-------The grammar-------\n\n\{labOneGrammar}");
+        System.out.println(String.format("-------The grammar-------%n%n%s", labOneGrammar));
 
         /* **************************************
             PART 2: Generating random words
@@ -41,7 +41,7 @@ public class Main {
         while (words.size() < 5) {
             words.add(labOneGrammar.generateRandomString(true));
         }
-        System.out.println("\n-----5 generated words-------\n" + words);
+        System.out.printf("\n-----5 generated words-------\n%s%n", words);
 
         FiniteAutomaton finiteAutomaton = labOneGrammar.toFiniteAutomation();
 
@@ -51,8 +51,14 @@ public class Main {
         String testString = "abcabcabcabcaababaac";
         String randomString = labOneGrammar.generateRandomString(false);
 
-        System.out.println(STR."The verdict upon randomly generated string (should be always true) \{randomString} is : \{finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(randomString))}");
+        System.out.printf(
+                "The verdict upon randomly generated string (should be always true) %s is : %s%n",
+                randomString, finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(randomString))
+        );
 
-        System.out.println(STR."The verdict upon string \{testString} is : \{finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(testString))}");
+        System.out.printf(
+                "The verdict upon string %s is : %s%n",
+                testString, finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(testString))
+        );
     }
 }

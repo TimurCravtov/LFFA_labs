@@ -93,8 +93,7 @@ public class Grammar {
     }
 
     public String toString() {
-        return STR."V_N : \{V_N.toString()}\nV_T: \{V_T}\nS: \{S}\nP:\{P}";
-    }
+        return String.format("V_N : %s%nV_T: %s%nS: %s%nP: %s", V_N, V_T, S, P);    }
 
 
     /**
@@ -115,7 +114,7 @@ public class Grammar {
         int i = 0;
 
         if (showProcess) {
-            System.out.println(STR."1. \{S}");
+            System.out.println(String.format("1. %s", S));
         }
 
         List<Letter> word = new ArrayList<>(List.of(S));
@@ -147,7 +146,7 @@ public class Grammar {
                     nextGenWord.addAll(randomIndex, selectedRule.getTo());
                 }
                 else {
-                    throw new RuntimeException(STR."Couldn't find right rule for letter \{randomLetter} adjust your productions or alphabet");
+                    throw new RuntimeException(String.format("Couldn't find right rule for letter %s, adjust your productions or alphabet", randomLetter));
                 }
             }
 
@@ -155,7 +154,7 @@ public class Grammar {
             i++;
 
             if (showProcess) {
-                System.out.println(STR."\{i}. \{word.stream().map(Letter::getLetter).collect(Collectors.joining())}");
+                System.out.println(String.format("%d. %s", i, word.stream().map(Letter::getLetter).collect(Collectors.joining())));
             }
         }
 

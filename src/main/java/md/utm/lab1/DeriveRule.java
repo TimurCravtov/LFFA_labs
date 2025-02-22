@@ -27,7 +27,7 @@ public class DeriveRule {
         String firstPart = Word.makeString(from);
         String secondPart = Word.makeString(to);
 
-        return STR."\{firstPart} → \{secondPart}";
+        return String.format("%s → %s", firstPart, secondPart);
     }
 
     public DeriveRule(List<Letter> from, Letter to) {
