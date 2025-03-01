@@ -149,7 +149,7 @@ public Transition(State from, AlphabetSymbol label, State to) {
 }
 ```
 
-Going back to `Grammar`, this is how to convert it to `FiniteAutomata`. Since the constuctor uses interfaces of `Set<State>`, `Set<Letter>` works too. 
+Going back to `Grammar`, this is how to convert it to `FiniteAutomata`. Since the constuctor uses interfaces of `Set<State>`, `Set<Letter>` works too.
 
 
 ```java
@@ -180,7 +180,7 @@ public FiniteAutomaton toFiniteAutomation() {
 }
 ```
 
-Now, let's generate 5 random strings and see if a string belongs to finite automata. 
+Now, let's generate 5 random strings and see if a string belongs to finite automata.
 
 ```java
 
@@ -244,4 +244,3 @@ Possible future improvements include extending support for non-regular grammars,
 [^2]: Introduction to Finite automate, geeksforgeeks -
 
 [^3]: Lecture notes
-

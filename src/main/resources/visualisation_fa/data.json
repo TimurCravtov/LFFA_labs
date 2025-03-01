@@ -1,57 +1,57 @@
 {
     "transitions": [
         {
-            "from": "D",
-            "to": "D",
-            "label": "a"
-        },
-        {
-            "from": "B",
-            "to": "B",
+            "from": "q0",
+            "to": "q0",
             "label": "b"
         },
         {
-            "from": "D",
-            "to": "S",
-            "label": "b"
-        },
-        {
-            "from": "B",
-            "to": "D",
-            "label": "a"
-        },
-        {
-            "from": "D",
-            "to": "{f}",
+            "from": "q1",
+            "to": "q1",
             "label": "c"
         },
         {
-            "from": "S",
-            "to": "B",
+            "from": "q3",
+            "to": "q3",
             "label": "a"
         },
         {
-            "from": "B",
-            "to": "S",
-            "label": "c"
+            "from": "q2",
+            "to": "q3",
+            "label": "a"
+        },
+        {
+            "from": "q0",
+            "to": "q1",
+            "label": "a"
+        },
+        {
+            "from": "q1",
+            "to": "q2",
+            "label": "a"
+        },
+        {
+            "from": "q3",
+            "to": "q1",
+            "label": "b|a"
         }
     ],
     "states": [
         {
-            "label": "{f}",
-            "type": "final"
-        },
-        {
-            "label": "B",
+            "label": "q1",
             "type": "general"
         },
         {
-            "label": "S",
+            "label": "q3",
+            "type": "general"
+        },
+        {
+            "label": "q0",
             "type": "start"
         },
         {
-            "label": "D",
-            "type": "general"
+            "label": "q2",
+            "type": "final"
         }
     ]
 }

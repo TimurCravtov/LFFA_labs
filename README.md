@@ -7,6 +7,7 @@ The list of all reports are available at [reports folder](reports). The links be
 ###  Contents
 
 1) [lab #1](reports/LAB-1_LFA_Timur-Cravtov.md) - Introduction to formal language alphabet, grammar and finite automata 
+1) [lab #2](reports/LAB-2_LFA_Timur-Cravtov.md) - Introduction to formal language alphabet, grammar and finite automata
 
 
 ### Author

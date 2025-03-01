@@ -24,6 +24,11 @@ public class ObjectState<T> implements State {
         return value == null ? "<null>" : value.toString();
     }
 
+    public T getObject() {
+        return value;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
