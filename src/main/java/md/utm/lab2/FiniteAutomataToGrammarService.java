@@ -34,7 +34,7 @@ public class FiniteAutomataToGrammarService {
 
             // If the transition leads to a final state, add a production rule A -> b
             if (finiteAutomaton.getF().contains(transition.getTo())) {
-                P.add(new DeriveRule(fromState, List.of(symbol)));
+                P.add(new DeriveRule(fromState, symbol));
             } else {
                 P.add(new DeriveRule(fromState, List.of(symbol, toState)));
             }

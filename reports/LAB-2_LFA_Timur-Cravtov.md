@@ -68,12 +68,28 @@ Predicate<Collection<DeriveRule>> sameRegularitySide = rules -> {...};
 ```
 3) In third step, if we get some productions in which `from` part is not one letter, we produce another filter separating 0 type from 1
 
+
+
+```java
+
+for (DeriveRule rule : secondStepMap.get(false)) {
+    if (rule.getFrom().size() > rule.getTo().size()) {
+        isContextSensitive = false;
+        break;
+    }
+}
+        ... 
+if (isContextSensitive || hasSEpsilonRule) return ChomskyType.TYPE1;
+else return ChomskyType.TYPE0;
+```
+
 ### Determining FA type
 
 The summary of `getFiniteAutomationType()`:
 1) Iterate through transitions. If there is one epsilon-transition (label is epsilon), it's NFA
-2) Create a HashMap of `{state}:{label}`. If during the adding of new key, the key is present, it means it's NFA
+2) Create a HashMap of `{state}:{label}`. If during the adding of new key of the transition, the key is already present, it means it's NFA
 3) If none of the above happened during the iterations, it's DFA
+
 
 ### NFA to DFA conversion
 
@@ -87,9 +103,28 @@ ObjectState<HashSet<State>> dfaQ0 = new ObjectState<>(new HashSet<>());
             dfaQ0.getObject().addAll(getEpsilonClosure(this.q0));
 ```
 2) Finding the states reachable in NFA from current DFA state
+```java
+for (State nfaState : currentDfaState.getObject()) {
+    nextNfaStates.addAll(this.getNextStates(nfaState, symbol));
+}
+```
+
 3) For this NFA states, add in new DFA state the set of union of sets of epsilon closure of them. (too much sets)
+
+```java
+Set<State> nextDfaStateSet = new HashSet<>();
+for (State state : nextNfaStates) {
+    nextDfaStateSet.addAll(getEpsilonClosur(state));
+}
+```
 4) Continue processing the states until the queue is empty
 5) The set of final states - is a set of all DFA states which contain final state of initial NFA.
+
+```java
+Set<ObjectState<HashSet<State>>> dfaFinalStates = dfaStates.stream()
+        .filter(state -> state.getObject().stream().anyMatch(F::contains))
+        .collect(Collectors.toSet());
+```
 
 ### F.A. to Regular Grammar:
 
@@ -97,9 +132,10 @@ Again, it follows the common algorithm:
 
 1) `V_T` is the set of alphabet of NFA
 2) `V_N` is the set of all states in NFA but the {final} state superficially added to convert Grammar to NFA
-3) Transition mapping:
-   - `δ(A, b) = F` are converted to `A -> b`;
-   - `δ(A, b) = C` are converted to `A -> bC`;
+3) Transition mapping of `δ(A, b) = C`:
+   - Is converted to `A -> b` if C is a final state:
+   - `A -> bC` otherwise
+  
 4) `q0` is mapped to `S`
 
 
