@@ -79,7 +79,7 @@ for (DeriveRule rule : secondStepMap.get(false)) {
     }
 }
         ... 
-if (isContextSensitive || hasSEpsilonRule) return ChomskyType.TYPE1;
+if (isContextSensitive) return ChomskyType.TYPE1;
 else return ChomskyType.TYPE0;
 ```
 

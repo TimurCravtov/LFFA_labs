@@ -175,11 +175,12 @@ public class Grammar {
         boolean hasSEpsilonRule = P.stream()
                 .anyMatch(rule -> rule.getFrom().size() == 1 && rule.getFrom().getFirst().equals(S) && rule.getTo().getFirst().equals(Letter.EPSILON));
 
+        // idk what for is this, might be useful
         if (hasSEpsilonRule) {
             if (reasoning) System.out.println("The grammar contains the rule S -> ε, which is allowed in context-sensitive grammars.");
         }
 
-        if (isContextSensitive || hasSEpsilonRule) {
+        if (isContextSensitive) {
             if (reasoning) System.out.println("All rules satisfy the context-sensitive condition. The grammar is Type 1.");
             return ChomskyType.TYPE1;
         } else {
