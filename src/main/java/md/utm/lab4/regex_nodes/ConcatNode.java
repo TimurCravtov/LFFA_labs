@@ -18,14 +18,21 @@ public class ConcatNode extends RegexNode {
 
         String indent = "• ".repeat(level);
 
+        // Print reasoning messages only if reasoning is true
         if (reasoning) {
-            System.out.println(indent + getColouredClassName() +  ":: contains the following nodes: " + children.stream().map(c -> className()).toList());
-            System.out.println(indent + "Iterating over them to generate a concatenated string...");
+            System.out.print(indent + getColouredClassName() + ":: contains the following nodes: " +
+                    children
+                            .stream()
+                            .map(c -> ColorManager.colorize(c.className(), ColorManager.WHITE_UNDERLINED))
+                            .collect(Collectors.toList()));
+            System.out.println(". Iterating over them to generate a concatenated string...");
         }
 
         StringBuilder sb = new StringBuilder();
         for (RegexNode child : children) {
-            System.out.println(indent + getColouredClassName() + ":: Processing " + ColorManager.colorize(child.className(), ColorManager.WHITE_UNDERLINED));
+            if (reasoning) {
+                System.out.println(indent + getColouredClassName() + ":: Processing " + ColorManager.colorize(child.className(), ColorManager.WHITE_UNDERLINED));
+            }
 
             String generated = child.generate(reasoning, level + 1);
 
@@ -35,8 +42,9 @@ public class ConcatNode extends RegexNode {
             sb.append(generated);
         }
 
+        // Final result message only if reasoning is true
         if (reasoning) {
-            System.out.println(indent + "Generated: " + ColorManager.colorize(sb.toString(), ColorManager.GREEN));
+            System.out.println(indent + getColouredClassNameFinal() + ":: Generated: " + ColorManager.colorize(sb.toString(), ColorManager.GREEN));
         }
 
         return sb.toString();
