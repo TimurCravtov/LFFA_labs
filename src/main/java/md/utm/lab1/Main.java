@@ -61,7 +61,7 @@ public class Main {
 
                 new DeriveRule(new Letter("D"), List.of(new Letter("a"), new Letter("D"))),
                 new DeriveRule(new Letter("D"), List.of(new Letter("b"), new Letter("S"))),
-//                new DeriveRule(new Letter("D"), List.of(new Letter("S"), new Letter("b"))), // this line uncommented will produce type-2 grammar
+                new DeriveRule(new Letter("D"), List.of(new Letter("S"), new Letter("b"))), // this line uncommented will produce type-2 grammar
 
                 new DeriveRule(new Letter("B"), List.of(new Letter("c"), new Letter("S"))),
 //                new DeriveRule(List.of(new Letter("B"), new Letter("S"), new Letter("D")), new Letter("c")), // type 0

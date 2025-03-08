@@ -38,6 +38,7 @@ public class WholeTest {
         assertEquals("NFA", finiteAutomationType.toString());
 
         Grammar faEq = finiteAutomaton.toGrammar();
+//        System.out.println(faEq.getChomskyType(false));
         System.out.println("====== Its equivalent Grammar: \n " + faEq);
     }
 
