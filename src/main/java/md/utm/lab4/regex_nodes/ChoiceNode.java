@@ -14,8 +14,6 @@ public class ChoiceNode extends RegexNode {
 
     private final List<RegexNode> nodes;
 
-
-
     public ChoiceNode(RegexNode ... nodes) {
         this.nodes = Arrays.asList(nodes);
     }
@@ -28,7 +26,6 @@ public class ChoiceNode extends RegexNode {
         if (reasoning) {
             System.out.println(indent + getColouredClassName() + ": choosing between " + nodes.stream().map(c -> colorize(c.className(), WHITE_UNDERLINED)).toList().toString());
         }
-
 
         int chosenNodeIndex = rand.nextInt(nodes.size());
 

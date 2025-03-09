@@ -16,9 +16,8 @@ public class PowerNode extends RegexNode {
         StringBuilder result = new StringBuilder();
         String indent = "• ".repeat(level);
 
-        // Print reasoning messages only if reasoning is true
         if (reasoning) {
-            // Corrected colorize usage for reasoning message
+
             System.out.println(indent + getColouredClassName() + ":: Applying '" + ColorManager.colorize(power, ColorManager.PURPLE) + "' to " + node.className());
         }
 
@@ -47,7 +46,6 @@ public class PowerNode extends RegexNode {
             }
         }
 
-        // Final result message only if reasoning is true
         if (reasoning) {
             System.out.println(indent + getColouredClassNameFinal() + ":: Generated " + ColorManager.colorize(result.toString(), ColorManager.GREEN));
         }

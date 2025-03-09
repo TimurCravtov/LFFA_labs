@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Lab4Test {
+public class ThreeRegexTest {
 
     @Test
     public void regex1() {
@@ -39,6 +39,31 @@ public class Lab4Test {
 
     @Test
     public void regex2() {
+        RegexNode root = new ConcatNode(
+                new LiteralNode("L"),
+                new ChoiceNode(
+                        new LiteralNode("M"),
+                        new LiteralNode("N")
+                ),
+                new PowerNode(
+                        new LiteralNode("O"),
+                        "3"
+                ),
+                new PowerNode(
+                        new LiteralNode("P"),
+                        "*"
+                ),
+                new LiteralNode("Q"),
+                new ChoiceNode(
+                        new LiteralNode("2"),
+                        new LiteralNode("3")
+                )
+        );
+
+
+        root.generate(true, 1);
+        System.out.println(IntStream.range(0, 20).mapToObj(_ -> root.generate(false, 1)).collect(Collectors.toSet()));
+
     }
 
     @Test
@@ -64,32 +89,4 @@ public class Lab4Test {
         root.generate(true, 1);
         System.out.println(IntStream.range(0, 20).mapToObj(_ -> root.generate(false, 1)).collect(Collectors.toSet()));
     }
-
-
-
-
-
-
-
-
-
-
-
-    @Test
-    public void regex4() {
-        RegexNode root = new PowerNode(
-                        new ChoiceNode(
-                                new PowerNode(
-                                        new LiteralNode("a"),
-                                        "2"
-                                ),
-                                new LiteralNode("b")
-                        ), "2");
-
-        root.generate(true, 1);
-
-        System.out.println(IntStream.range(0, 20).mapToObj(_ -> root.generate(false, 1)).collect(Collectors.toSet()));
-
-    }
-
 }
