@@ -8,7 +8,7 @@
 
 ## Theory
 
-Lexer / Scanner are one of the core functionality in compiler design. The Lexer aka Scanner, is responsible for dividing the input string of characters into tokens, aka *Lexemes*.
+Lexer / Scanner [^3] are one of the core functionality in compiler design. The Lexer aka Scanner, is responsible for dividing the input string of characters into tokens, aka *Lexemes*.
 
 Lexer can be represented as stream of lexemes. Each lexeme has its type and, possibly, value. E.g: In a string `... while (a <= b) ...` while can be treated as `keyword` with value `while`, `a` and `b` - `variable`s with corresponding values, and `<=` as `mathematical condition`. 
 
@@ -17,7 +17,7 @@ So, a Lexer is not only responsible for splitting the string by some delimiters 
 
 ## Objectives:
 
-- Understand what lexical analysis [1] is.
+- Understand what lexical analysis [2] is.
 - Get familiar with the inner workings of a lexer/scanner/tokenizer.
 - Implement a sample lexer and show how it works.
 
@@ -74,7 +74,7 @@ private static final Map<String, Set<String>> DAYS_OF_WEEK_VARIATIONS = Map.of(
 private static final Set<String> REPEAT_CONDITIONS = Set.of("daily", "weekly", "monthly", "yearly");
 ```
 
-2) Next step, we define the matching patters using build-in `Regex` pattern finders. To name a few, we have defined:
+2) Next step, we define the matching patters using build-in `Regex` pattern finders [^4]. To name a few, we have defined:
 
 - `DATE_PATTERN`: `"\\d{4}.\\d{1,2}.\\d{1,2}"`
 - `TIME_PATTERN`: `\d{1,2}:\d{2}`
@@ -120,8 +120,10 @@ I defined Token Types which work with basic date formats; Then, I defined a `Map
 
 Using all of this structures, i iterated over [sample.aion](../src/main/java/md/utm/lab3/resources/sample.aion) file and extracted the tokens. The output proved that it works as intended.
 
-[^1]: Aion website https://aion-ics.github.io/ (might not be done until the end of the semester)
+[^1]: Aion website - https://aion-ics.github.io/ (might not be done until the end of the semester)
 
-[^2]: Introduction to Finite automate, geeksforgeeks -
+[^2]: Example of a lexer written in C - https://www.geeksforgeeks.org/c-lexical-analyser-lexer/
 
 [^3]: Lecture notes
+
+[^4]: Regex in Java - https://www.w3schools.com/java/java_regex.asp
