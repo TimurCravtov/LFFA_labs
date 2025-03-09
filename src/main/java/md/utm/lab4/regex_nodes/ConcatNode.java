@@ -24,7 +24,7 @@ public class ConcatNode extends RegexNode {
                     children
                             .stream()
                             .map(c -> ColorManager.colorize(c.className(), ColorManager.WHITE_UNDERLINED))
-                            .collect(Collectors.toList()));
+                            .toList());
             System.out.println(". Iterating over them to generate a concatenated string...");
         }
 

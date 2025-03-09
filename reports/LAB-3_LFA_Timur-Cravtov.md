@@ -1,4 +1,4 @@
-# Intro to formal languages. Regular grammars. Finite Automata.
+# Lexer & Scanner
 
 ### Course: Formal Languages & Finite Automata
 ### Author: Timur Cravțov
@@ -7,239 +7,120 @@
 ----
 
 ## Theory
-Grammar [^1] [^3] is a 4 tuple:
-1) V_N - set of non-terminal letters
-2) V_T - set of terminal letter
-3) P - set of derive rules
-4) S - start letter
 
-A grammar with rules in form:
-A → aA or A → a is called left-regular grammar can be used to create a finite automata.
+Lexer / Scanner are one of the core functionality in compiler design. The Lexer aka Scanner, is responsible for dividing the input string of characters into tokens, aka *Lexemes*.
 
-Finite automata [^2] is a 5 - tuple:
-1) Q - set of all possible states, including final
-2) Alphabet (denotes as capital sigma letter) - set of Alphabet Symbols
-3) Transitions (denoted as delta letter) - set of all transition functions, which maps State + letter to other state (or set of states in NFA)
-4) q0 - initial state
-5) F - final state
+Lexer can be represented as stream of lexemes. Each lexeme has its type and, possibly, value. E.g: In a string `... while (a <= b) ...` while can be treated as `keyword` with value `while`, `a` and `b` - `variable`s with corresponding values, and `<=` as `mathematical condition`. 
 
-There is a theorem about equivalence of grammar and FA - one can easily be transformed in other. The algorithm Grammar To Finite Automata is described below.
-
+So, a Lexer is not only responsible for splitting the string by some delimiters such as spaces or `;`, but also providing lexical analysis which includes determining the actual type of that token.
 
 
 ## Objectives:
 
-- Set up the project
-- Getting familiar with notions of alphabet, derive rules, grammar, finite automata. 
-- Implement algorithm for transforming grammar to FA
-- Implement expression validation.
-
+- Understand what lexical analysis [1] is.
+- Get familiar with the inner workings of a lexer/scanner/tokenizer.
+- Implement a sample lexer and show how it works.
 
 ## Implementation description
 
-### Util classes & interfaces
+The `AionLexer` class provides `tokenize` function for `.aion` files. Aion [^1] is a DSL that is being developed during current semester at PBL course, which manages `.ics` files. Since Aion language is still under development, the used `sample.aion` and `simple.aion` files might not represent the latest Aion grammar rules or possible token types. 
 
-First of all, I'll describe the additional classes I've created:
-1) First is `Letter` class, which consists of a String representation of letter and a flag if it's terminal or not. Two methods from `Object` class (`equals`, `hashCode`) were overriden for a better *Set* funcionality.
-
-Since the letter is actually both a state and alphabet symbol, it implements the corresponding interfaces.
+The Token types defined by the language are the following:
 
 ```java
-// Letter class
-public class Letter implements State, AlphabetSymbol {
-    private final String letter;
-    ...
+public enum TokenType {
+    DAY_OF_WEEK, DATE, TIME, NUMBER, STRING, KEYWORD, SYMBOL, OPERATOR, VARIABLE, DELIMITER, PERIOD, REPEAT_CONDITION, MONTH, COMPARISON_CONDITION,
 }
 ```
 
-2) Second - `DeriveRule` class. It consists of a List of `Letter`s - from and to. In was told in the presentation that <u>from</u> need to have at least one non-terminal symbol: hence, it means it may be a list. Since neither or variants had more than one symbol in "from" part, the implementation only works with Lists which consists of one letter.
+As already mentioned, each `Token` has a type and, optionally, value.  
 
 ```java
-public class DeriveRule {
-    private final List<Letter> from;
-    private final List<Letter> to;
-    ...
+public class Token {
+    private TokenType type;
+    private String value;
+    // ...
 }
 ```
 
-3) Interfaces - `State` and `Alphabet Symbol`. Used for dependency inversion principle. Both have methods `String get...Name()`
+### Tokenization description
 
-### Core classes 
-Now, the `Grammar` class. In constuctir we pass all the needed state variables (V_N, V_T, P, S) which are not null;
+This section will describe the algorithm of tokenization.
 
+1) Firstly, we define the keywords-
+
+- Keywords really used as keywords, like syntax keyword:
 ```java
-public Grammar(Set<Letter> V_N, Set<Letter> V_T, Set<DeriveRule> productions, Letter S) {
-
-    if (Stream.of(V_T, V_N, S, productions).anyMatch(Objects::isNull)) {
-        throw new RuntimeException("V_T, V_N, S and P should not be null");
-    }
-
-    this.V_N = V_N;
-    this.V_T = V_T;
-    this.P = productions;
-    this.S = S;
-}
+private static final Set<String> KEYWORDS = Set.of(
+"import", "as", "calendar", "event", "default" /*,  ...  */ );
 ```
 
-Next, the `generateRandomWord()` is defined. The process of generation looks the following way:
-1) It generates a string which consists of S:
-2) While the string has non-terminal letter, it picks a random letter.
-3) Then, it picks a random rule where this letter is in *from* part.
-4) Applies the rule, by replacing the picked letter with the *to* part of the rule
-5) Repeats
-6) The final string is generated (using `Word.makeString(List<Letter>)` method).
+- Days of the Week names and their shortcuts:
 
 ```java
-public String generateRandomString(boolean showProcess) {
-    
-    ... 
-    
-    while (word.stream().anyMatch(V_N::contains)) {
-        
-        List<Integer> nonTerminalIndices = IntStream.range(0, finalWord.size())
-                .filter(index -> V_N.contains(finalWord.get(index)))
-                .boxed()
-                .toList();
-
-        if (!nonTerminalIndices.isEmpty()) {
-
-            ... // fining random index of non-terminal symbol
-            
-            Letter randomLetter = word.get(randomIndex);
-            
-            if (!possibleRules.isEmpty()) {
-                DeriveRule selectedRule = possibleRules.get(random.nextInt(possibleRules.size()));
-
-                nextGenWord.remove(randomIndex);
-                nextGenWord.addAll(randomIndex, selectedRule.getTo());
-            }
-            else {
-                throw new RuntimeException(STR."Couldn't find right rule for letter \{randomLetter} adjust your productions or alphabet");
-            }
-        }
-
-        ...
-        
-    return Word.makeString(word);
-}
-// Word.java
+private static final Map<String, Set<String>> DAYS_OF_WEEK_VARIATIONS = Map.of(
+            "Monday", Set.of("Monday", "Mon", "M") /*, ... */);
 ```
 
-Before we go to `toFiniteAutomation()` method, first I'll describe the `FiniteAutomation` methods.
-
-The constructor is straightforward.:
-
+- Month names and their shortcuts:
 ```java
-public FiniteAutomaton(Set<State> Q, Set<AlphabetSymbol> sigmaAlphabet, Set<Transition> deltaTransitions, State q0, Set<State> F) {
-        this.Q = Q;
-        this.q0 = q0;
-        this.sigmaAlphabet = sigmaAlphabet;
-        this.deltaTransitions = deltaTransitions;
-        this.F = F;
-    }
+ private static final Map<String, Set<String>> MONTHS_VARIATIONS = new HashMap<>() {{
+        put("January", Set.of("January", "Jan")) /*, ... */; }};
 ```
 
-And the transition function is defined by `Transition` because using real functions or maps may be a little tricky.
+- Repeat timeframes
 
 ```java
-public Transition(State from, AlphabetSymbol label, State to) {
-    this.from = from;
-    this.label = label;
-    this.to = to;
-}
+private static final Set<String> REPEAT_CONDITIONS = Set.of("daily", "weekly", "monthly", "yearly");
 ```
 
-Going back to `Grammar`, this is how to convert it to `FiniteAutomata`. Since the constuctor uses interfaces of `Set<State>`, `Set<Letter>` works too.
+2) Next step, we define the matching patters using build-in `Regex` pattern finders. To name a few, we have defined:
 
+- `DATE_PATTERN`: `"\\d{4}.\\d{1,2}.\\d{1,2}"`
+- `TIME_PATTERN`: `\d{1,2}:\d{2}`
+- `VARIABLE_PATTERN`: `[a-zA-Z_][a-zA-Z0-9_]*`
 
-```java
-public FiniteAutomaton toFiniteAutomation() {
+... and other
 
-    if (!isRegular()) {
-        throw new RuntimeException("The grammar is not regular, can't create finite automata");
-    }
+3) Then, we start iterate through the input. On each step, we try to match the substring `[currentposition: length)` to each of the defined Regex. If one look-up if found (E.g. we see a substring `13:40 March ...`) extract add in Token List new `Token(TokenType.TIME, 13:40)`, and move the cursor to the length of the found substring (in this example, `5`).
+4) If in input stream some unknown keyword is found, it is though as a variable. For instance, if somebody misspelled `Wendzeday`, it is gonna be considered variable.
+5) Since the variables can be only alphanumeric with underscores, not all the non-keyword token values are accepted. If a token starts with some special symbol (E.g. `$some_php_variable`), the tokenizer is going to throw an exception.
 
-    Set<Transition> delta = new HashSet<>();
-
-    // transform rules in transitions
-    P.forEach(rule -> delta.add(
-            new Transition(
-                    rule.getFrom().getFirst(),
-                    rule.getTo().getFirst(),
-                    rule.getTo().size() == 2 ? rule.getTo().get(1) : Letter.F
-            )));
-
-    System.out.println(delta);
-
-    // add to states all the non-terminal plus final
-    Set<State> states = new HashSet<>(V_N);
-    Set<AlphabetSymbol> alphabet = new HashSet<>(V_T);
-    states.add(Letter.F);
-
-    return new FiniteAutomaton(states, alphabet, delta, S, Set.of(Letter.F));
-}
-```
-
-Now, let's generate 5 random strings and see if a string belongs to finite automata.
+For example, this is a part of iteration over the input string, where `pos` is the current "cursor" position
 
 ```java
-
-... // generate sets of productions, letters
-
-Grammar labOneGrammar = new Grammar(V_N, V_T, P, new Letter("S"));
-
-// Now, 5 strings generated: 
-
-Set<String> words = new HashSet<>();
-
-while (words.size() < 5) {
-        words.add(labOneGrammar.generateRandomString(true));
+// Extract period in form 2h
+Matcher periodMatcher = PERIOD_PATTERN.matcher(input.substring(pos));
+if (periodMatcher.lookingAt()) {
+    tokens.add(new Token(TokenType.PERIOD, periodMatcher.group()));
+    pos += periodMatcher.group().length();
+    continue;
 }
-       //  ...
-
-
-// and string validation
-FiniteAutomaton finiteAutomaton = labOneGrammar.toFiniteAutomation();
-
-String testString = "acacaababababbcacacacaabccccccccaaaac";
-
-// ...
-
-System.out.println(STR."The verdict upon string \{testString} is : \{finiteAutomaton.belongsToAutomation(LetterListHelper.getLetterListFromString(testString))}");
 ```
 
 ## Conclusions / Screenshots / Results
 
-### Screenshots
 
+### Screenshots 
+Tokenization of `sample.aion` file:
 
-#### 5 generated words:
-<img src="screenshots/lab1/generated_words.png">
+1) First screenshot, the initial result. In the first line the types of tokens from the second like. In the bottom, each Token is displayed with its type and value.
 
-#### Generated FA:
-<img src="screenshots/lab1/generated_fa.png">
+<img src="screenshots/lab3/sample_1.png">
 
-#### String verification
+2) Some additional token types not seen in screenshot below.
 
-<img src="screenshots/lab1/verification.png">
+<img src="screenshots/lab3/sample_2.png">
 
 ### Conclusions
 
-During this laboratory work, I successfully implemented two fundamental components of finite automata theory: `Grammar` and `FiniteAutomaton`, along with the necessary helper classes. The `Grammar` class includes a method `toFiniteAutomation()`, which transforms a given left-regular grammar into a finite automaton. The `FiniteAutomaton` class features a `belongsToAutomation(List<AlphabetSymbol>)` method, allowing validation of whether a string belongs to the generated automaton (and its equivalent grammar).
+During this laboratory work, I killed two birds with one stone, developing Lexer for `Aion` language. 
 
-Through this implementation, I deepened my understanding of the equivalence between regular grammars and finite automata, as well as the algorithmic process of transformation. The use of the Dependency Inversion Principle ensured flexibility and reusability by defining abstract interfaces for `State` and `AlphabetSymbol`, making the system adaptable for further modifications or expansions.
+I defined Token Types which work with basic date formats; Then, I defined a `Map` of days of the week and their shortcuts; same thing with Months. Then, a regex-based `Pattern`s were defined for classifying the current string input. 
 
-The objectives set at the beginning were successfully achieved. The implemented system allows for:
+Using all of this structures, i iterated over [sample.aion](../src/main/java/md/utm/lab3/resources/sample.aion) file and extracted the tokens. The output proved that it works as intended.
 
-- The generation of words based on a given grammar,
-- The conversion of regular grammar into a finite automaton,
-- The validation of strings against the constructed automaton.
-
-Possible future improvements include extending support for non-regular grammars, and integrating a visual representation of the generated automaton for better understanding. Overall, this work provides a solid foundation for further explorations in formal languages and automata theory.
-
-## References
-
-[^1]: Regular grammar, Wikipedia - https://en.wikipedia.org/wiki/Regular_grammar
+[^1]: Aion website https://aion-ics.github.io/ (might not be done until the end of the semester)
 
 [^2]: Introduction to Finite automate, geeksforgeeks -
 

@@ -25,7 +25,12 @@ public class QuestionNode extends RegexNode {
         }
 
         if (toGenerate) {
-            return node.generate(reasoning, level + 1);
+            var generated = node.generate(reasoning, level + 1);
+            if (reasoning) {
+                System.out.println(indent + getColouredClassNameFinal() + ":: Generated " + ColorManager.colorize(generated, ColorManager.GREEN));
+            }
+            return generated;
+
         } else {
             return "";
         }

@@ -7,7 +7,11 @@ The list of all reports are available at [reports folder](reports). The links be
 ###  Contents
 
 1) [lab #1](reports/LAB-1_LFA_Timur-Cravtov.md) - Introduction to formal language alphabet, grammar and finite automata 
-1) [lab #2](reports/LAB-2_LFA_Timur-Cravtov.md) - Introduction to formal language alphabet, grammar and finite automata
+2) [lab #2](reports/LAB-2_LFA_Timur-Cravtov.md) - Determinism in Finite Automata. Conversion from NDFA 2 DFA. Chomsky Hierarchy.
+3) [lab #3](reports/LAB-3_LFA_Timur-Cravtov.md) - Lexer & Scanner.
+
+[//]: # (4&#41; [lab #4]&#40;reports/LAB-3_LFA_Timur-Cravtov.md&#41;)
+
 
 
 ### Author

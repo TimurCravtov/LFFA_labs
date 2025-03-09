@@ -37,7 +37,7 @@ public class Main {
 
         // Generate a random string from the tree
 
-        String generated = root.generate(true, 0);
+        String generated = root.generate(true, 1);
 
         System.out.println("\n -- Final generated string: -- ");
         System.out.println(ColorManager.colorize(generated, ColorManager.GREEN));

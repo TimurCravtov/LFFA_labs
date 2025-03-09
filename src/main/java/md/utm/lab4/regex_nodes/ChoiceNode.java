@@ -2,14 +2,22 @@ package md.utm.lab4.regex_nodes;
 
 import md.utm.utils.ColorManager;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+
+import static md.utm.utils.ColorManager.WHITE_UNDERLINED;
+import static md.utm.utils.ColorManager.colorize;
 
 public class ChoiceNode extends RegexNode {
-    private final RegexNode left, right;
 
-    public ChoiceNode(RegexNode left, RegexNode right) {
-        this.left = left;
-        this.right = right;
+    private final List<RegexNode> nodes;
+
+
+
+    public ChoiceNode(RegexNode ... nodes) {
+        this.nodes = Arrays.asList(nodes);
     }
 
     @Override
@@ -17,26 +25,23 @@ public class ChoiceNode extends RegexNode {
         String indent = "• ".repeat(level);
         String generated;
 
-        // Print reasoning message only if reasoning is true
         if (reasoning) {
-            System.out.println(indent + getColouredClassName() + ": choosing between left and right");
+            System.out.println(indent + getColouredClassName() + ": choosing between " + nodes.stream().map(c -> colorize(c.className(), WHITE_UNDERLINED)).toList().toString());
         }
 
-        if (rand.nextBoolean()) {
-            if (reasoning) {
-                System.out.println(indent + getColouredClassName() + ":: chosen: left " + String.format("(%s)", left.className()));
-            }
-            generated = left.generate(reasoning, level + 1);
-        } else {
-            if (reasoning) {
-                System.out.println(indent + getColouredClassName() + ":: chosen: right " + String.format("(%s)", right.className()));
-            }
-            generated = right.generate(reasoning, level + 1);
+
+        int chosenNodeIndex = rand.nextInt(nodes.size());
+
+        if (reasoning) {
+            System.out.println(indent + getColouredClassName() + ":: chosen: " + String.format("%d (%s)", chosenNodeIndex, nodes.get(chosenNodeIndex).className()));
+
         }
 
-        // Final result message only if reasoning is true
+        generated = nodes.get(chosenNodeIndex).generate(reasoning, level + 1);
+
+
         if (reasoning) {
-            System.out.println(indent + getColouredClassNameFinal() + ":: Generated: " + ColorManager.colorize(generated, ColorManager.GREEN));
+            System.out.println(indent + getColouredClassNameFinal() + ":: Generated: " + colorize(generated, ColorManager.GREEN));
         }
 
         return generated;
