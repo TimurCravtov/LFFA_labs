@@ -17,7 +17,7 @@ So, a Lexer is not only responsible for splitting the string by some delimiters 
 
 ## Objectives:
 
-- Understand what lexical analysis [2] is.
+- Understand what lexical analysis [^2] is.
 - Get familiar with the inner workings of a lexer/scanner/tokenizer.
 - Implement a sample lexer and show how it works.
 
