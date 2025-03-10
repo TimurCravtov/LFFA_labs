@@ -1,5 +1,6 @@
 package lab4;
 
+import kotlin.text.Regex;
 import md.utm.lab4.regex_nodes.*;
 import org.junit.jupiter.api.Test;
 
@@ -88,5 +89,7 @@ public class ThreeRegexTest {
 
         root.generate(true, 1);
         System.out.println(IntStream.range(0, 20).mapToObj(_ -> root.generate(false, 1)).collect(Collectors.toSet()));
+
+
     }
 }
