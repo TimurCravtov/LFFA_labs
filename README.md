@@ -10,7 +10,7 @@ The list of all reports are available at [reports folder](reports). The links be
 2) [lab #2](reports/LAB-2_LFA_Timur-Cravtov.md) - Determinism in Finite Automata. Conversion from NDFA 2 DFA. Chomsky Hierarchy.
 3) [lab #3](reports/LAB-3_LFA_Timur-Cravtov.md) - Lexer & Scanner.
 
-[//]: # (4&#41; [lab #4]&#40;reports/LAB-3_LFA_Timur-Cravtov.md&#41;)
+4) [lab #4](reports/LAB-4_LFA_Timur-Cravtov.md) - Regex
 
 
 
