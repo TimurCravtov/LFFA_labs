@@ -72,7 +72,7 @@ public class ConcatNode extends RegexNode {
     // ... 
 }
 ```
-3) `PowerNode` - is a node in a form of `A^n`, where n can be either `*`, `+` and any other name. When its `generate()` is called, it iterates `n` times, appending the result of `generate` of the child node
+3) `PowerNode` - is a node in a form of `A^n`, where n can be either `*`, `+` and any number. When its `generate()` is called, it iterates `n` times (for `*` and `+` it picks a number from `[0,6]` and `[1, 5]` respectively) , appending the result of `generate` of the child node
 
 ```java
 public class PowerNode extends RegexNode {
@@ -82,7 +82,7 @@ public class PowerNode extends RegexNode {
 }
 ```
 
-4) `QuestionNode` - generatess the child's output if `randboolean` gives true. Otherwise, skips.
+4) `QuestionNode` - generates the child's output if `randboolean` gives true. Otherwise, skips.
 
 ```java
 public class QuestionNode extends RegexNode {
@@ -114,7 +114,12 @@ The example hierarchy may look like:
 
 Its equivalent regex is:
 
-<img src="screenshots/lab4/example.png">
+<div align="center">
+<code>
+(S | T?)
+</code>
+</div>
+
 
 ## Conclusions / Screenshots / Results
 
@@ -140,7 +145,7 @@ The generated expressions for 3rd Regex:
 
 ### Conclusions
 
-During this laboratory work, I implemented a random regex string generation, It has a recursive hierarchy consisting of nodes `QuestionNode`, `ConcatNode`, `ChoiceNode`, `QuestionNode`, `LiterNode`. The program gracefully prints the random strings which satisfy the Regex. 
+During this laboratory work, I implemented a random regex string generation, It has a some sort of recursive hierarchy consisting of nodes `QuestionNode`, `ConcatNode`, `ChoiceNode`, `QuestionNode`, `LiterNode`. The program gracefully prints the random strings which satisfy the Regex. 
 
 ## References
 
