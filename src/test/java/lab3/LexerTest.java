@@ -1,9 +1,9 @@
 package lab3;
 
-import md.utm.lab3.Token;
-import md.utm.lab3.TokenStreamVisualizer;
+import md.utm.tokenizer.Token;
+import md.utm.tokenizer.TokenStreamVisualizer;
 import org.junit.jupiter.api.Test;
-import static md.utm.lab3.AionLexer.tokenize;
+import static md.utm.tokenizer.AionLexer.tokenize;
 import static md.utm.utils.FileReader.read;
 
 

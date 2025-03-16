@@ -1,20 +1,20 @@
 package lab2;
 
-import md.utm.lab1.FiniteAutomaton;
-import md.utm.lab1.Grammar;
-import md.utm.lab1.Main;
-import md.utm.lab2.ChomskyType;
-import md.utm.lab2.FiniteAutomationType;
+import md.utm.grammar.FiniteAutomaton;
+import md.utm.grammar.Grammar;
+import md.utm.grammar.Main;
+import md.utm.finite_automation.ChomskyType;
+import md.utm.finite_automation.FiniteAutomationType;
 import org.junit.jupiter.api.Test;
 
-import static md.utm.lab2.Main.getLabTwoAutomata;
+import static md.utm.finite_automation.Main.getLabTwoAutomata;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WholeTest {
 
     @Test
     public void testGrammarType() {
-        Grammar grammarOneLab = md.utm.lab1.Main.getLabOneGrammar();
+        Grammar grammarOneLab = md.utm.grammar.Main.getLabOneGrammar();
 
         System.out.println("============= Lab 1 Grammar: =============== \n" + grammarOneLab);
 

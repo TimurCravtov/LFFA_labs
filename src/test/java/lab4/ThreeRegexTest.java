@@ -1,7 +1,6 @@
 package lab4;
 
-import kotlin.text.Regex;
-import md.utm.lab4.regex_nodes.*;
+import md.utm.regular_expessions.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.Collectors;

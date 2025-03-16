@@ -118,7 +118,7 @@ During this laboratory work, I killed two birds with one stone, developing Lexer
 
 I defined Token Types which work with basic date formats; Then, I defined a `Map` of days of the week and their shortcuts; same thing with Months. Then, a regex-based `Pattern`s were defined for classifying the current string input. 
 
-Using all of this structures, i iterated over [sample.aion](../src/main/java/md/utm/lab3/resources/sample.aion) file and extracted the tokens. The output proved that it works as intended.
+Using all of this structures, i iterated over [sample.aion](../src/main/java/md/utm/tokenizer/resources/sample.aion) file and extracted the tokens. The output proved that it works as intended.
 
 [^1]: Aion website - https://aion-ics.github.io/ (might not be done until the end of the semester)
 
