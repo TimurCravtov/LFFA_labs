@@ -72,7 +72,7 @@ public class AionLexer {
             // Extract strings
             Matcher stringMatcher = STRING_PATTERN.matcher(input.substring(pos));
             if (stringMatcher.lookingAt()) {
-                tokens.add(new Token(TokenType.STRING, stringMatcher.group(1)));
+                tokens.add(new Token(TokenType.STRING, stringMatcher.group(1), pos));
                 pos += stringMatcher.group().length();
                 continue;
             }
@@ -80,7 +80,7 @@ public class AionLexer {
             // Extract time in form 21:00
             Matcher timeMatcher = TIME_PATTERN.matcher(input.substring(pos));
             if (timeMatcher.lookingAt()) {
-                tokens.add(new Token(TokenType.TIME, timeMatcher.group()));
+                tokens.add(new Token(TokenType.TIME, timeMatcher.group(), pos));
                 pos += timeMatcher.group().length();
                 continue;
             }
@@ -88,7 +88,7 @@ public class AionLexer {
             // Extract period in form 2h
             Matcher periodMatcher = PERIOD_PATTERN.matcher(input.substring(pos));
             if (periodMatcher.lookingAt()) {
-                tokens.add(new Token(TokenType.PERIOD, periodMatcher.group()));
+                tokens.add(new Token(TokenType.PERIOD, periodMatcher.group(), pos));
                 pos += periodMatcher.group().length();
                 continue;
             }
@@ -97,7 +97,7 @@ public class AionLexer {
             // extract date like 2025.10.20
             Matcher dataMatcher = DATE_PATTERN.matcher(input.substring(pos));
             if (dataMatcher.lookingAt()) {
-                tokens.add(new Token(TokenType.DATE, dataMatcher.group()));
+                tokens.add(new Token(TokenType.DATE, dataMatcher.group(), pos));
                 pos += dataMatcher.group().length();
                 continue;
             }
@@ -105,7 +105,7 @@ public class AionLexer {
             // Simply extract number
             Matcher numberMatcher = NUMBER_PATTERN.matcher(input.substring(pos));
             if (numberMatcher.lookingAt()) {
-                tokens.add(new Token(TokenType.NUMBER, numberMatcher.group()));
+                tokens.add(new Token(TokenType.NUMBER, numberMatcher.group(), pos));
                 pos += numberMatcher.group().length();
                 continue;
             }
@@ -118,7 +118,7 @@ public class AionLexer {
                     .filter(op -> finalInput.startsWith(op, finalPos))
                     .findFirst();
             if (matchedOp.isPresent()) {
-                tokens.add(new Token(TokenType.COMPARISON_CONDITION, matchedOp.get()));
+                tokens.add(new Token(TokenType.COMPARISON_CONDITION, matchedOp.get(), pos));
                 pos += matchedOp.get().length();
                 continue;
             }
@@ -131,44 +131,44 @@ public class AionLexer {
 
                 // if word is keyword
                 if (KEYWORDS.contains(word)) {
-                    tokens.add(new Token(TokenType.KEYWORD, word));
+                    tokens.add(new Token(TokenType.KEYWORD, word, pos));
 
                 // if word is day of week
                 } else if (DAYS_OF_WEEK_VARIATIONS.values().stream().anyMatch(set -> ContainsIgnoreCaseKt.containsIgnoreCase(set, word))) {
-                    tokens.add(new Token(TokenType.DAY_OF_WEEK, word));
+                    tokens.add(new Token(TokenType.DAY_OF_WEEK, word, pos));
 
                 // if word is month
                 } else if (MONTHS_VARIATIONS.values().stream().anyMatch(set -> ContainsIgnoreCaseKt.containsIgnoreCase(set, word))) {
-                    tokens.add(new Token(TokenType.MONTH, word));
+                    tokens.add(new Token(TokenType.MONTH, word, pos));
 
                 // if word is repeaters words (like daily, monthly, etc.)
                 } else if (REPEAT_CONDITIONS.contains(word.toLowerCase())) {
-                    tokens.add(new Token(TokenType.REPEAT_CONDITION, word));
+                    tokens.add(new Token(TokenType.REPEAT_CONDITION, word, pos));
                 } else {
-                    tokens.add(new Token(TokenType.VARIABLE, word));
+                    tokens.add(new Token(TokenType.VARIABLE, word, pos));
                 }
                 pos += word.length();
                 continue;
             }
 
             if (current == '\n') {
-                tokens.add(new Token(TokenType.DELIMITER, "\\n"));
+                tokens.add(new Token(TokenType.DELIMITER, "\\n", pos));
                 pos++;
                 continue;
             } else if (current == ';') {
-                tokens.add(new Token(TokenType.DELIMITER, ";"));
+                tokens.add(new Token(TokenType.DELIMITER, ";", pos));
                 pos++;
                 continue;
             }
 
             if (current == '=') {
-                tokens.add(new Token(TokenType.ASSIGMENT_OPERATOR, "="));
+                tokens.add(new Token(TokenType.ASSIGMENT_OPERATOR, "=", pos));
                 pos++;
                 continue;
             }
             // Symbols
             if ("{}(),+:".indexOf(current) != -1) {
-                tokens.add(new Token(TokenType.SYMBOL, String.valueOf(current)));
+                tokens.add(new Token(TokenType.SYMBOL, String.valueOf(current), pos));
                 pos++;
                 continue;
             }

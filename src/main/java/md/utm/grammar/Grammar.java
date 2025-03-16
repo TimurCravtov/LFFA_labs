@@ -301,4 +301,29 @@ public class Grammar {
 
         return Word.makeString(word);
     }
+
+
+    public Set<Letter> getV_N() {
+        return V_N;
+    }
+
+    public Set<Letter> getV_T() {
+        return V_T;
+    }
+
+    public Set<DeriveRule> getP() {
+        return P;
+    }
+
+    public Letter getS() {
+        return S;
+    }
+
+    public ChomskyType getType() {
+        return type;
+    }
+
+    public void setType(ChomskyType type) {
+        this.type = type;
+    }
 }
