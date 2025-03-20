@@ -4,9 +4,7 @@ import java.util.Objects;
 
 public class Letter implements State, AlphabetSymbol {
 
-//    public static final Letter epsilon = new Letter("ε", true);
-
-    public static final Letter epsilon = new Letter("\uF065");
+    public static final Letter EPSILON = new Letter("ε");
     public static final Letter F = new Letter("{f}");
 
     private final String letter;

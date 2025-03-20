@@ -94,7 +94,7 @@ public class FiniteAutomaton {
 
             for (Transition transition : deltaTransitions) {
                 if (transition.getLabel().equals(AlphabetSymbol.EPSILON)) {
-                    System.out.println("Has epsilon transitions");
+                    System.out.println("Has EPSILON transitions");
                     finiteAutomatonType = FiniteAutomationType.NFA;
                     return finiteAutomatonType;
 
@@ -123,7 +123,7 @@ public class FiniteAutomaton {
             System.out.println("The Finite Automaton is already a DFA. Returning the same automaton.");
             return this;
         } else {
-            // Initialize the initial state of the DFA with the epsilon closure of the NFA's initial state
+            // Initialize the initial state of the DFA with the EPSILON closure of the NFA's initial state
             ObjectState<HashSet<State>> dfaQ0 = new ObjectState<>(new HashSet<>());
             dfaQ0.getObject().add(this.q0);
             dfaQ0.getObject().addAll(getEpsilonClosure(this.q0));
