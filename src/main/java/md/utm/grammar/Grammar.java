@@ -233,8 +233,37 @@ public class Grammar {
         return new FiniteAutomaton(states, alphabet, delta, S, Set.of(Letter.F));
     }
 
+    @Override
     public String toString() {
-        return String.format("V_N : %s%nV_T: %s%nS: %s%nP: %s", V_N, V_T, S, P);    }
+
+        String groupedP = P.stream()
+                .collect(Collectors.groupingBy(rule -> rule.getFrom().getFirst()))
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    Letter from = entry.getKey();
+                    List<String> derivations = entry.getValue().stream()
+                            .map(rule -> {
+                                if (rule.getTo().isEmpty()) {
+                                    return "ε";
+                                } else {
+                                    return rule.getTo().stream()
+                                            .map(Letter::getLetter)
+                                            .collect(Collectors.joining());
+                                }
+                            })
+                            .toList();
+                    return String.format("%s → %s", from.getLetter(), String.join(" | ", derivations));
+                })
+                .collect(Collectors.joining("\n"));
+
+        return String.format("V_N : %s%nV_T: %s%nS: %s%nP:[%n%s]",
+                V_N.stream().map(Letter::getLetter).collect(Collectors.toSet()),
+                V_T.stream().map(Letter::getLetter).collect(Collectors.toSet()),
+                S.getLetter(),
+                groupedP);
+    }
+
 
 
     /**

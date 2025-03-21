@@ -15,7 +15,7 @@ public class NormalizationTest {
 
     @Test
     public void testNormalization() {
-        Grammar grammar = getGrammar();
+        Grammar grammar = Variant12GrammarToNormalize.get();
         System.out.println(grammar);
         CNFService cnfService = new CNFService(grammar);
         System.out.println(cnfService.extractNullables());

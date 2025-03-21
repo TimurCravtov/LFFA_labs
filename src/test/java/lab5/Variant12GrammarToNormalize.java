@@ -35,6 +35,11 @@ public class Variant12GrammarToNormalize {
         productions.add(new DeriveRule(A, List.of(a, S)));
         productions.add(new DeriveRule(A, List.of(A, B, a, b)));
         productions.add(new DeriveRule(B, a));
+
+
+//        productions.add(new DeriveRule(B, Letter.EPSILON)); //
+//        productions.add(new DeriveRule(C, Letter.EPSILON)); //
+
         productions.add(new DeriveRule(B, List.of(b, S)));
 
         productions.add(new DeriveRule(C, List.of(a, b, C)));

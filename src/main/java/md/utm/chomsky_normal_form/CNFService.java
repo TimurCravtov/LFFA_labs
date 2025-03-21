@@ -44,41 +44,55 @@ public class CNFService {
 
 
     public Set<Letter> extractNullables() {
-
         Set<Letter> VNcopy = Set.copyOf(initialGrammar.getV_N());
 
-        return VNcopy.
-                stream().
-                filter(letter -> isNullable(
-                        initialGrammar.getS(),
+        return VNcopy.stream()
+                .filter(letter -> isNullable(
                         letter,
                         initialGrammar.getP(),
                         initialGrammar.getV_T(),
-                        initialGrammar.getV_N()
-                        )).collect(Collectors.toSet());
+                        initialGrammar.getV_N(),
+                        new HashSet<>()) // New visited set for each letter
+                ).collect(Collectors.toSet());
     }
 
-    public boolean isNullable(Letter S, Letter forCheck, Collection<DeriveRule> rules, Set<Letter> VT, Set<Letter> VN) {
+    public boolean isNullable(Letter forCheck,
+                              Collection<DeriveRule> rules,
+                              Set<Letter> VT,
+                              Set<Letter> VN,
+                              Set<Letter> visited) {
 
-//        System.out.println("Check if " + forCheck + " is null");
-        Collection<DeriveRule> thisLetterRules = rules.stream().filter(r -> r.getFrom().getFirst().equals(forCheck)).toList();
+        // If already visited, return false to avoid infinite recursion
+        if (visited.contains(forCheck)) {
+            return false;
+        }
 
-//        System.out.println(thisLetterRules);
+        // Mark this node as visited
+        visited.add(forCheck);
+
+        Collection<DeriveRule> thisLetterRules = rules.stream()
+                .filter(r -> r.getFrom().getFirst().equals(forCheck))
+                .toList();
+
+        // Directly nullable (A -> ε)
         if (hasNullTransition(thisLetterRules)) {
-//            System.out.println("Return true");
             return true;
         }
 
-        // In case there is
-        // A -> ... | QWINWQDQWD | ...
-        // And all the QWINWQDQWD are nullable
-        // A is nullable.
-        if (thisLetterRules.stream().anyMatch(r-> VN.containsAll(r.getTo()) && r.getTo().stream().allMatch(r1 -> isNullable(S, r1, rules, VT, VN)))) {
-            return true;
+        // Recursive case: check if all symbols in the right-hand side are nullable
+        for (DeriveRule rule : thisLetterRules) {
+            // All letters on the right-hand side must be nullable
+            boolean allNullable = rule.getTo().stream()
+                    .allMatch(r1 -> isNullable(r1, rules, VT, VN, new HashSet<>(visited)));
+
+            if (allNullable) {
+                return true;
+            }
         }
 
         return false;
     }
+
 
     public boolean hasNullTransition(Collection<DeriveRule> rules) {
 //        rules.forEach(r -> System.out.println("Checking rule: " + r + ", isNull? " + isNullTransition(r)));
