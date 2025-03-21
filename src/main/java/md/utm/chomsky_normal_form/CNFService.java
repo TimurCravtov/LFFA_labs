@@ -42,6 +42,113 @@ public class CNFService {
         return null;
     }
 
+    public Set<DeriveRule> eliminateEpsilonTransitions() {
+        Set<Letter> nullables = extractNullables();
+
+        // Start with a copy of the original rules, minus ε rules (clean base)
+        Set<DeriveRule> newRules = new HashSet<>(initialGrammar.getP());
+        newRules.removeIf(this::isNullTransition);
+
+        Set<DeriveRule> generatedRules = new HashSet<>();
+
+        // Go through all existing rules
+        for (DeriveRule rule : initialGrammar.getP()) {
+            List<Letter> rhs = rule.getTo();
+
+
+            List<Integer> nullableIndexes = new java.util.ArrayList<>();
+            for (int i = 0; i < rhs.size(); i++) {
+                if (nullables.contains(rhs.get(i))) {
+                    nullableIndexes.add(i);
+                }
+            }
+
+            // Generate combinations of nullable indexes to remove
+            Set<List<Letter>> combinations = generateNullableCombinations(rhs, nullableIndexes);
+
+            // For each combination, create a new rule if it's different from the original RHS
+            for (List<Letter> combination : combinations) {
+                if (combination.isEmpty()) {
+                    continue; // We don't add empty rules here (A -> ε) unless explicitly required
+                }
+
+                DeriveRule newRule = new DeriveRule(rule.getFrom(), combination);
+                generatedRules.add(newRule);
+            }
+        }
+
+        // Combine the rules: original (without ε) + generated
+        newRules.addAll(generatedRules);
+
+        return newRules;
+    }
+
+    private Set<List<Letter>> generateNullableCombinations(List<Letter> rhs, List<Integer> nullableIndexes) {
+        Set<List<Letter>> combinations = new HashSet<>();
+
+        int totalNullable = nullableIndexes.size();
+
+        // 2^nullableIndexes.size() combinations
+        int combinationsCount = 1 << totalNullable;
+
+        // in mask each bit 10001 means 1 - keep, 0 - discard
+        for (int mask = 1; mask < combinationsCount; mask++) {
+
+            List<Letter> newCombination = new java.util.ArrayList<>();
+
+            // For each letter in rhs, include it unless it's nullable, and we decide to exclude it
+            for (int i = 0; i < rhs.size(); i++) {
+                if (!nullableIndexes.contains(i)) {
+
+                    newCombination.add(rhs.get(i));
+                } else {
+
+                    // we have AbcdEfG. (for simplicity, each terminal is nullable. So nullable indexes = [0, 4, 6] )
+                    // if we're currently working on letter E, it's index in rhs is 4. The 4th index in nullableIndexes is 1st index.
+                    // now returning to mask.
+                    // if we have a mask 011, we discard E and G.
+                    // So, if we apply to mask the 1st index we get:
+
+                    // 1 << 1 = 01
+                    // mask & 01 = 011 & 001 = 1. If 1, we discard, otherwise, keep.
+                    // special thanks to Olga Grosu and Viorel Bostan for teaching us boolean algrebra
+                    // will anyone ever read this? I don't think so.
+                    int nullableIndex = nullableIndexes.indexOf(i);
+                    boolean keep = (mask & (1 << nullableIndex)) == 0;
+                    if (keep) {
+                        newCombination.add(rhs.get(i));
+                    }
+                }
+            }
+            combinations.add(newCombination);
+        }
+
+        return combinations;
+    }
+
+
+    private boolean isUnit(DeriveRule rule) {
+        List<Letter> lhs = rule.getFrom();
+        List<Letter> rhs = rule.getTo();
+
+        // returns true if sizes of left and right part are 1 and both are non-terminal
+        return lhs.size() == 1 && rhs.size() == 1 && this.initialGrammar.getV_N().containsAll(Set.of(lhs.getFirst(), rhs.getFirst()));
+
+    }
+
+    public void eliminateRenamings() {
+
+    }
+
+    public void eliminateInaccessible() {
+
+    }
+
+    public void eliminateNonProductiveSymbols() {
+
+    }
+
+
 
     public Set<Letter> extractNullables() {
         Set<Letter> VNcopy = Set.copyOf(initialGrammar.getV_N());
