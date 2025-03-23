@@ -27,7 +27,9 @@ public class NormalizationTest {
 
     @Test
     public void textWithoutWords() {
-        Grammar grammar = Variant12GrammarToNormalize.get();
+//        Grammar grammar = Variant12GrammarToNormalize.get();
+        Grammar grammar = getGrammar();
+
         System.out.println(colorize("Initial grammar:", CYAN));
         System.out.println(grammar);
 
@@ -43,6 +45,18 @@ public class NormalizationTest {
 
         System.out.println(colorize("Grammar after eliminating renamings: ", BLUE));
         cnfService.eliminateRenamings();
+        System.out.println(cnfService.getGrammar());
+
+        System.out.println(colorize("Grammar after shorty-fying ", BLUE));
+        cnfService.replaceLongProductions();
+        System.out.println(cnfService.getGrammar());
+
+        System.out.println(colorize("Grammar after replacing terminals with non-terminals", BLUE));
+        cnfService.replaceTerminalsWithIntermediate();
+        System.out.println(cnfService.getGrammar());
+
+        System.out.println(colorize("Grammar after cleaning", BLUE));
+        cnfService.removeInaccessible();
         System.out.println(cnfService.getGrammar());
 
     }
@@ -75,8 +89,6 @@ public class NormalizationTest {
 
         productions.add(new DeriveRule(B, List.of(b, S)));
 
-        productions.add(new DeriveRule(C, List.of(a, b, C)));
-        productions.add(new DeriveRule(D, List.of(A, B)));
 
         return new Grammar(VN, VT, productions, S);
     }

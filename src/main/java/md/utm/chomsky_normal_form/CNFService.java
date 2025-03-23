@@ -59,7 +59,7 @@ public class CNFService {
         }
     }
 
-    public Set<DeriveRule> eliminateEpsilonTransitions() {
+    public void eliminateEpsilonTransitions() {
         Set<Letter> nullables = extractNullables();
 
         // Start with a copy of the original rules, minus ε rules (clean base)
@@ -97,7 +97,6 @@ public class CNFService {
         // Combine the rules: original (without ε) + generated
         newRules.addAll(generatedRules);
         this.grammar.setP(newRules);
-        return newRules;
     }
 
     private Set<List<Letter>> generateNullableCombinations(List<Letter> rhs, List<Integer> nullableIndexes) {
@@ -141,6 +140,84 @@ public class CNFService {
         }
 
         return combinations;
+    }
+
+
+    public void replaceLongProductions() {
+
+        HashSet<DeriveRule> newProductions = new HashSet<>();
+
+        for (DeriveRule rule : grammar.getP()) {
+            HashSet<DeriveRule> eachStepNewRules = new HashSet<>();
+            shortify(rule, eachStepNewRules);
+            newProductions.addAll(eachStepNewRules);
+        }
+
+        grammar.getP().removeIf(rule -> rule.getTo().size() > 2);
+        grammar.getP().addAll(newProductions);
+    }
+
+    public void shortify(DeriveRule rule, Set<DeriveRule> returningSet) {
+        if (rule.getTo().size() > 2) {
+
+            Letter newLetter = variableFactory.getNextNonterminal();
+            grammar.getV_N().add(newLetter);
+            List<Letter> newRhs = rule.getTo().subList(1, rule.getTo().size());
+
+            DeriveRule ruleToAdd = new DeriveRule(rule.getFrom().getFirst(), List.of(rule.getTo().getFirst(), newLetter));
+            returningSet.add(ruleToAdd);
+
+            DeriveRule shorterRule = new DeriveRule(newLetter, newRhs);
+            shortify(shorterRule, returningSet);
+
+        }
+        else {
+            returningSet.add(rule);
+        }
+    }
+
+    public void replaceTerminalsWithIntermediate() {
+        final int MAX_NON_TERMINAL_COUNT = 2;
+        Set<DeriveRule> newRules = new HashSet<>();
+
+        // Iterate through each rule in the grammar's production set
+        for (DeriveRule rule : grammar.getP()) {
+            List<Letter> rhs = rule.getTo();
+
+            // Skip rules with RHS length < 2
+            if (rhs.size() < 2) {
+                newRules.add(rule);  // Preserve the original rule
+                continue;
+            }
+
+            List<Letter> updatedRhs = new ArrayList<>(rhs);  // Create a mutable copy
+            int replacementsMade = 0;
+
+            // Replace up to MAX_NON_TERMINAL_COUNT terminals
+            for (int i = 0; i < rhs.size() && replacementsMade < MAX_NON_TERMINAL_COUNT; i++) {
+                Letter letter = rhs.get(i);
+                if (grammar.getV_T().contains(letter)) {  // Check if it's a terminal
+                    Letter newNonTerminal = replaceWithNonTerminal(letter);
+                    updatedRhs.set(i, newNonTerminal);
+                    newRules.add(new DeriveRule(newNonTerminal, List.of(letter)));
+                    replacementsMade++;
+                }
+            }
+
+            // Add the updated rule
+            newRules.add(new DeriveRule(rule.getFrom(), updatedRhs));
+        }
+
+        // Update the grammar's production rules
+        grammar.getP().clear();
+        grammar.getP().addAll(newRules);
+    }
+
+
+
+
+    private Letter replaceWithNonTerminal(Letter letter) {
+        return variableFactory.getNonterminalNewLetter(letter);
     }
 
 
@@ -290,9 +367,10 @@ public class CNFService {
     }
 
     public boolean isNullTransition(DeriveRule deriveRule) {
-        List<Letter> rhs = deriveRule.getTo();
 
-        return rhs.size() == 1 && rhs.getFirst().equals(Letter.EPSILON);
+
+        List<Letter> rhs = deriveRule.getTo();
+        return rhs.size() == 1 && rhs.getFirst().equals(Letter.EPSILON) && !deriveRule.getTo().equals(grammar.getS());
     }
 
 
@@ -304,6 +382,72 @@ public class CNFService {
         return false;
     }
 
+    public void removeInaccessible() {
+        // Step 1: Find all accessible symbols starting from S
+        Set<Letter> accessible = new HashSet<>();
+        Set<Letter> visited = new HashSet<>();
 
+        // Start with the start symbol
+        accessible.add(grammar.getS());
+        findAccessibleSymbols(grammar.getS(), accessible, visited);
 
+        // Step 2: Remove rules containing inaccessible symbols
+        Set<DeriveRule> newRules = grammar.getP().stream()
+                .filter(rule -> accessible.contains(rule.getFrom().getFirst()) &&
+                        rule.getTo().stream().allMatch(letter ->
+                                letter.equals(Letter.EPSILON) ||
+                                        accessible.contains(letter)))
+                .collect(Collectors.toSet());
+
+        // Step 3: Update non-terminals (V_N) and rules (P)
+        Set<Letter> newVN = grammar.getV_N().stream()
+                .filter(accessible::contains)
+                .collect(Collectors.toSet());
+
+        grammar.setP(newRules);
+        grammar.setV_N(newVN);
+    }
+
+    /**
+     * Recursively finds all symbols accessible from the given letter.
+     * @param current The current symbol being processed
+     * @param accessible Set to store all accessible symbols
+     * @param visited Set to prevent infinite recursion
+     */
+    private void findAccessibleSymbols(Letter current, Set<Letter> accessible, Set<Letter> visited) {
+        if (visited.contains(current)) {
+            return; // Avoid cycles
+        }
+
+        visited.add(current);
+
+        // Find all rules where 'current' is on the left-hand side
+        Set<DeriveRule> relevantRules = grammar.getP().stream()
+                .filter(rule -> rule.getFrom().getFirst().equals(current))
+                .collect(Collectors.toSet());
+
+        // For each rule, add right-hand side symbols to accessible set
+        for (DeriveRule rule : relevantRules) {
+            for (Letter letter : rule.getTo()) {
+                if (!letter.equals(Letter.EPSILON) && !accessible.contains(letter)) {
+                    accessible.add(letter);
+                    // If it's a non-terminal, recursively explore it
+                    if (grammar.getV_N().contains(letter)) {
+                        findAccessibleSymbols(letter, accessible, visited);
+                    }
+                }
+            }
+        }
+    }
+
+    public void simplify() {
+
+    }
+
+    /**
+     * Checks if an RHS is valid for CNF: either one terminal or two non-terminals.
+     */
+    private boolean isValidCnfRhs(List<Letter> rhs) {
+        return true;
+    }
 }

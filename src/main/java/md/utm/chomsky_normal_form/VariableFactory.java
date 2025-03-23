@@ -5,6 +5,8 @@ import md.utm.grammar.Letter;
 import java.util.HashSet;
 import java.util.Set;
 
+import static md.utm.utils.SubscriptConverter.toSubscript;
+
 public class VariableFactory {
 
     private final Set<Letter> managedNonterminalLetters;
@@ -12,8 +14,8 @@ public class VariableFactory {
 
 
     public VariableFactory(Set<Letter> terminalLetters, Set<Letter> nonTerminalLetters) {
-        this.managedNonterminalLetters = new HashSet<>(terminalLetters);
-        this.managedTerminalLetters = new HashSet<>(nonTerminalLetters);
+        this.managedNonterminalLetters = new HashSet<>(nonTerminalLetters);
+        this.managedTerminalLetters = new HashSet<>(terminalLetters);
     }
 
     
@@ -22,7 +24,6 @@ public class VariableFactory {
 
         // check if it's terminal
         if (managedTerminalLetters.contains(terminal)) {
-
             // if it's something like c, then we'll try to return C
             if (terminal.getLetter().length() == 1) {
                 
@@ -64,9 +65,10 @@ public class VariableFactory {
         for (int j = 0; true; j++) {
             
             // only generates X1, Y11, etc
-            for (int i = 'Z'; i >= 'X'; i--) {
+            for (int i = 'Z'; i >= 'N'; i--) {
+                if (i == 'S') continue;
+                String newLetterValue = j == 0 ? String.valueOf((char) i) : String.format("%c%s", i, toSubscript(j));
 
-                String newLetterValue = j == 0 ? String.valueOf((char) i) : String.format("%c%d", i, j);
                 Letter newLetter = new Letter(newLetterValue);
                 if (!managedNonterminalLetters.contains(newLetter) && !managedTerminalLetters.contains(newLetter)) {
                     managedNonterminalLetters.add(newLetter);
