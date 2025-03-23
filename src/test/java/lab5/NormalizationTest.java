@@ -27,8 +27,8 @@ public class NormalizationTest {
 
     @Test
     public void textWithoutWords() {
-//        Grammar grammar = Variant12GrammarToNormalize.get();
-        Grammar grammar = getGrammar();
+        Grammar grammar = Variant12GrammarToNormalize.get();
+//        Grammar grammar = getGrammar();
 
         System.out.println(colorize("Initial grammar:", CYAN));
         System.out.println(grammar);
@@ -37,6 +37,10 @@ public class NormalizationTest {
 
         System.out.println(colorize("Grammar after resolving S rule: ", YELLOW));
         cnfService.resolveStartingSymbol();
+        System.out.println(cnfService.getGrammar());
+
+        System.out.println(colorize("Grammar after removing inaccessible", BLUE));
+        cnfService.removeInaccessible();
         System.out.println(cnfService.getGrammar());
 
         System.out.println(colorize("Grammar after eliminating epsilon transitions: ", RED));
@@ -55,8 +59,10 @@ public class NormalizationTest {
         cnfService.replaceTerminalsWithIntermediate();
         System.out.println(cnfService.getGrammar());
 
-        System.out.println(colorize("Grammar after cleaning", BLUE));
-        cnfService.removeInaccessible();
+
+
+        System.out.println(colorize("Grammar after removing repetitions", BLUE));
+        cnfService.removeRepetitions();
         System.out.println(cnfService.getGrammar());
 
     }

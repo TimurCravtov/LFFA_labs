@@ -41,9 +41,109 @@ The obtained Chosmky Normal Form is not unique for the Grammar. One can define e
 
 ## Implementation description
 
+Here is step-by-step process of CNF-service work:
+
+1) Creates rule S -> S0 if needed
+
+```java
+public void resolveStartingSymbol() {
+    if (hasSOnRight(grammar.getS(), grammar.getP())) {
+        Letter newStart = variableFactory.getNewStartLetter();
+        this.grammar.getP().add(new DeriveRule(newStart, grammar.getS()));
+        this.grammar.setS(newStart);
+        this.grammar.getV_N().add(newStart);
+    }
+}
+```
+
+This function uses `hasSOnRight()` method which takes iterates trough production rules and, if there is one, sets new Starting symbol and adds it to V_N
+
+2) Eliminate epsilon transitions.
+
+```java
+public void eliminateEpsilonTransitions() {
+        // ... 
+        Set<Letter> nullables = extractNullables();
+        newRules.removeIf(this::isNullTransition);
+        // ... 
+
+        for (DeriveRule rule : grammar.getP()) {
+            // .. 
+            Set<List<Letter>> combinations = generateNullableCombinations(rhs, nullableIndexes);
+            // ..
+           DeriveRule newRule = new DeriveRule(rule.getFrom(), combination);
+                generatedRules.add(newRule);
+        }
+        // ...
+    }
+```
+
+This method extracts nullabes (already explained in Theory part what nullable is, and then adds to rules new ones with all the combinations with nullable removed)
+
+3) Replace long production with short ones (E.g. A -> bCD to {A -> bE, E -> CD})
+
+```java
+public void replaceLongProductions() {
+    for (DeriveRule rule : grammar.getP()) {
+      HashSet<DeriveRule> eachStepNewRules = new HashSet<>();
+      shortify(rule, eachStepNewRules);
+      newProductions.addAll(eachStepNewRules);
+   }
+   grammar.getP().removeIf(rule -> rule.getTo().size() > 2);
+   grammar.getP().addAll(newProductions);
+}
+```
+It uses the recursive method `shortify()`, which recursively makes productions shorter and adds new rules. For examples, if we have production (A -> BCDE), it creates A -> BH, and simplifies H -> CDE. It creates H -> CI, and adds I -> DE. DE is already small, so it is added to final set of productions.
+
+4) Replaces all terminals with non-terminals
+
+```java
+public void replaceTerminalsWithIntermediate() {
+    
+   for (DeriveRule rule : grammar.getP()) {
+
+      // ...
+      for (int i = 0; i < MAX_NON_TERMINAL_COUNT; i++) {
+          // .. 
+          Letter newNonTerminal = replaceWithNonTerminal(letter);
+          this.grammar.getV_N().add(newNonTerminal);
+          newRules.add(new DeriveRule(newNonTerminal, List.of(letter)));
+      }
+   }
+   // ...
+}
+```
+
+This method is pretty straight forward.If the lenght of the RHS of a rule is 2, it might have either A -> bC or A -> bc, rules which need to be fixed. So, for each terminal we create a new letter, and create a rule Terminal -> Non-terminal. (E.g. A -> EC, E -> b). In the end, all the rules are updated.
+
+5) Simplification of the rules. 
+
+This is done in two steps:
+
+a) Removing inaccessible from S states
+
+b) Remove repetitions. In previous steps, a bunch of new states were introduced. There are states which lead to same set of symbol. E.g. we have (A -> {b}, C -> {b}). Having 2 same states is redundant, so we leave only one, and replace the deleted state with picked one in all possible rules.
+
+*Finally*, a CNF is obtained
+
+> Note: Each step can be done separately and in a couple of different orders.
+
+The image below [^3] demonstrates the relations between method call order and destroying of the transformations.
+
+<img src="screenshots/lab5/transformation_order.png">
+
+One can see, that there is some restrictions on order of operations. In current work implementation, all the intermediate transformation methods were mede `public` for testing purpose only. Each changes the `grammar` reference inside `CNFService` class. For general purpose, `normalize()` method of `CNFService`  is developed, where the mentioned methods (transformations) are called in one the accepted orders.
+
 ## Conclusions / Screenshots / Results
 
+The 12th variant grammar:
+
+<img src="screenshots/lab5/variant12task.png">
+
+
 ### Screenshots
+
+
 
 ### Conclusions
 
@@ -52,3 +152,5 @@ The obtained Chosmky Normal Form is not unique for the Grammar. One can define e
 [^1]: Lecture Notes
 
 [^2]: Clemson univesity, Chomsky normal form. https://people.computing.clemson.edu/~goddard/texts/theoryOfComputation/9a.pdf
+
+[^3]: Wikipedia. Chomsky normal form. https://en.wikipedia.org/wiki/Chomsky_normal_form

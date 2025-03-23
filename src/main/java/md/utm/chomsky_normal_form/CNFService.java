@@ -191,16 +191,14 @@ public class CNFService {
             }
 
             List<Letter> updatedRhs = new ArrayList<>(rhs);  // Create a mutable copy
-            int replacementsMade = 0;
 
-            // Replace up to MAX_NON_TERMINAL_COUNT terminals
-            for (int i = 0; i < rhs.size() && replacementsMade < MAX_NON_TERMINAL_COUNT; i++) {
+            for (int i = 0; i < MAX_NON_TERMINAL_COUNT; i++) {
                 Letter letter = rhs.get(i);
-                if (grammar.getV_T().contains(letter)) {  // Check if it's a terminal
+                if (grammar.getV_T().contains(letter)) {
                     Letter newNonTerminal = replaceWithNonTerminal(letter);
+                    this.grammar.getV_N().add(newNonTerminal);
                     updatedRhs.set(i, newNonTerminal);
-                    newRules.add(new DeriveRule(newNonTerminal, List.of(letter)));
-                    replacementsMade++;
+                    newRules.add(new DeriveRule(newNonTerminal, letter));
                 }
             }
 
@@ -218,6 +216,7 @@ public class CNFService {
 
     private Letter replaceWithNonTerminal(Letter letter) {
         return variableFactory.getNonterminalNewLetter(letter);
+
     }
 
 
@@ -299,16 +298,6 @@ public class CNFService {
 
         return closure;
     }
-
-    public void eliminateInaccessible() {
-
-    }
-
-    public void eliminateNonProductiveSymbols() {
-
-    }
-
-
 
     public Set<Letter> extractNullables() {
         Set<Letter> VNcopy = Set.copyOf(grammar.getV_N());
@@ -440,8 +429,71 @@ public class CNFService {
         }
     }
 
-    public void simplify() {
 
+    public void removeRepetitions() {
+        // Step 1: Map each non-terminal to its set of productions
+        Map<Letter, Set<List<Letter>>> productionMap = new HashMap<>();
+        for (Letter nonTerminal : grammar.getV_N()) {
+            Set<List<Letter>> productions = grammar.getP().stream()
+                    .filter(rule -> rule.getFrom().getFirst().equals(nonTerminal))
+                    .map(DeriveRule::getTo)
+                    .collect(Collectors.toSet());
+            productionMap.put(nonTerminal, productions);
+        }
+
+        // Step 2: Group non-terminals by identical production sets
+        Map<Set<List<Letter>>, Set<Letter>> equivalenceGroups = new HashMap<>();
+        for (Map.Entry<Letter, Set<List<Letter>>> entry : productionMap.entrySet()) {
+            equivalenceGroups
+                    .computeIfAbsent(entry.getValue(), k -> new HashSet<>())
+                    .add(entry.getKey());
+        }
+
+        // Step 3: For each group with more than one non-terminal, pick one and replace others
+        Map<Letter, Letter> replacementMap = new HashMap<>();
+        for (Set<Letter> group : equivalenceGroups.values()) {
+            if (group.size() > 1) {
+                // Try to find S in the group first
+                Letter representative = group.stream()
+                        .filter(l -> grammar.getS().equals(l))  // Look for S
+                        .findFirst()                             // If found, use it
+                        .orElse(group.iterator().next());        // Else pick any other letter
+
+                // Map all others to the representative
+                for (Letter letter : group) {
+                    if (!letter.equals(representative)) {
+                        replacementMap.put(letter, representative);
+                    }
+                }
+            }
+        }
+
+
+        // Step 4: Update production rules with replacements
+        Set<DeriveRule> newRules = new HashSet<>();
+        for (DeriveRule rule : grammar.getP()) {
+            Letter from = rule.getFrom().getFirst();
+            List<Letter> to = new ArrayList<>(rule.getTo());
+
+            // Replace left-hand side if needed
+            Letter newFrom = replacementMap.getOrDefault(from, from);
+
+            // Replace right-hand side letters if needed
+            List<Letter> newTo = new ArrayList<>();
+            for (Letter letter : to) {
+                newTo.add(replacementMap.getOrDefault(letter, letter));
+            }
+
+            newRules.add(new DeriveRule(newFrom, newTo));
+        }
+
+        // Step 5: Update V_N and P
+        Set<Letter> newVN = grammar.getV_N().stream()
+                .map(letter -> replacementMap.getOrDefault(letter, letter))
+                .collect(Collectors.toSet());
+
+        grammar.setP(newRules);
+        grammar.setV_N(newVN);
     }
 
     /**
