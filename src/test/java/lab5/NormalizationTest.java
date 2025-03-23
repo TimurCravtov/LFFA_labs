@@ -18,16 +18,14 @@ public class NormalizationTest {
     @Test
     public void testNormalization() {
         Grammar grammar = Variant12GrammarToNormalize.get();
-
-        System.out.println(grammar.getP());
         CNFService cnfService = new CNFService(grammar);
-        cnfService.resolveStartingSymbol();
-        System.out.println(cnfService.getGrammar());
+        cnfService.normalize();
+        System.out.println(cnfService);
     }
 
     @Test
-    public void textWithoutWords() {
-        Grammar grammar = Variant12GrammarToNormalize.get();
+    public void textWithReasoning() {
+        Grammar grammar = Variant12GrammarToNormalize.get15();
 //        Grammar grammar = getGrammar();
 
         System.out.println(colorize("Initial grammar:", CYAN));

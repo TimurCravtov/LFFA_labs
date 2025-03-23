@@ -66,4 +66,63 @@ public class Variant12GrammarToNormalize {
         // Return the grammar G = (VN, VT, P, S)
         return new Grammar(VN, VT, productions, S);
     }
+
+    public static Grammar get15() {
+        // Define non-terminal symbols (VN)
+        Letter S = new Letter("S");
+        Letter A = new Letter("A");
+        Letter B = new Letter("B");
+        Letter C = new Letter("C");
+        Letter D = new Letter("D");
+
+        // Define terminal symbols (VT)
+        Letter a = new Letter("a");
+        Letter b = new Letter("b");
+
+        // Set of non-terminals (VN)
+        Set<Letter> VN = new HashSet<>(Set.of(S, A, B, C, D));
+
+        // Set of terminals (VT)
+        Set<Letter> VT = new HashSet<>(Set.of(a, b));
+
+        // Set of productions (P)
+        Set<DeriveRule> productions = new HashSet<>();
+
+        // Productions from the grammar
+        // 1. S → AC
+        productions.add(new DeriveRule(S, List.of(A, C)));
+
+        // 2. S → BA
+        productions.add(new DeriveRule(S, List.of(B, A)));
+
+        // 3. S → B
+        productions.add(new DeriveRule(S, List.of(B)));
+
+        // 4. S → aA
+        productions.add(new DeriveRule(S, List.of(a, A)));
+
+        // 5. A → ε (epsilon)
+        productions.add(new DeriveRule(A, Letter.EPSILON));
+
+        // 6. A → aS
+        productions.add(new DeriveRule(A, List.of(a, S)));
+
+        // 7. A → ABab
+        productions.add(new DeriveRule(A, List.of(A, B, a, b)));
+
+        // 8. B → a
+        productions.add(new DeriveRule(B, List.of(a)));
+
+        // 9. B → bS
+        productions.add(new DeriveRule(B, List.of(b, S)));
+
+        // 10. C → abC
+        productions.add(new DeriveRule(C, List.of(a, b, C)));
+
+        // 11. D → AB
+        productions.add(new DeriveRule(D, List.of(A, B)));
+
+        // Return the grammar G = (VN, VT, P, S)
+        return new Grammar(VN, VT, productions, S);
+    }
 }

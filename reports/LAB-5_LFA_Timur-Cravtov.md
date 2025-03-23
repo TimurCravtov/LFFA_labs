@@ -138,11 +138,18 @@ One can see, that there is some restrictions on order of operations. In current 
 
 The 12th variant grammar:
 
-<img src="screenshots/lab5/variant12task.png">
+<img src="screenshots/lab5/variant15task.png">
 
 
 ### Screenshots
 
+1) Initial grammar
+
+<img src="screenshots/lab5/1.png">
+
+2) As one can notice, there are multiple productions which have *S* in RHS (E.g. *A -> aS*). Hence, we create a rule $S_0\rightarrow  S$, and add $S_0$ in $V_n$
+
+<img src="screenshots/lab5/2.png">
 
 
 ### Conclusions

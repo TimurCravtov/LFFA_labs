@@ -41,7 +41,11 @@ public class CNFService {
 
         resolveStartingSymbol();
         eliminateEpsilonTransitions();
+        removeInaccessible();
         eliminateRenamings();
+        replaceLongProductions();
+        replaceTerminalsWithIntermediate();
+        removeRepetitions();
 
         return this.grammar;
 
@@ -454,6 +458,9 @@ public class CNFService {
         for (Set<Letter> group : equivalenceGroups.values()) {
             if (group.size() > 1) {
                 // Try to find S in the group first
+
+                if (group.contains(grammar.getS())) continue;
+
                 Letter representative = group.stream()
                         .filter(l -> grammar.getS().equals(l))  // Look for S
                         .findFirst()                             // If found, use it
