@@ -16,19 +16,29 @@ public class VariableFactory {
         this.managedTerminalLetters = new HashSet<>(nonTerminalLetters);
     }
 
-    public Letter getNewLetter(Letter letter) {
+    
+    public Letter getNonterminalNewLetter(Letter terminal) {
+
 
         // check if it's terminal
-        if (managedTerminalLetters.contains(letter)) {
+        if (managedTerminalLetters.contains(terminal)) {
 
-            Letter uppercaseLetter = new Letter(letter.getLetter().toUpperCase());
-            if (!managedTerminalLetters.contains(uppercaseLetter) && !managedNonterminalLetters.contains(uppercaseLetter)) {
-                managedNonterminalLetters.add(uppercaseLetter);
-                return uppercaseLetter;
-            }
-            else return getNext();
+            // if it's something like c, then we'll try to return C
+            if (terminal.getLetter().length() == 1) {
+                
+                Letter uppercaseLetter = new Letter(terminal.getLetter().toUpperCase());
+                
+                if (!managedTerminalLetters.contains(uppercaseLetter) && !managedNonterminalLetters.contains(uppercaseLetter)) {
+                    managedNonterminalLetters.add(uppercaseLetter);
+                    return uppercaseLetter;
+                }
+                
+                else return getNextNonterminal();
+            } else return getNextNonterminal();
+
+        } else {
+            return null;
         }
-        else return null;
     }
 
     public Letter getNewStartLetter() {
@@ -45,14 +55,20 @@ public class VariableFactory {
 
     }
 
-    public Letter getNext() {
+    /**
+     * Helper method for generating a letter which do not exist in current <code>Managed Non-terminal letter</code>
+     * @return a next available letter
+     */
+    public Letter getNextNonterminal() {
 
         for (int j = 0; true; j++) {
+            
+            // only generates X1, Y11, etc
             for (int i = 'Z'; i >= 'X'; i--) {
 
                 String newLetterValue = j == 0 ? String.valueOf((char) i) : String.format("%c%d", i, j);
                 Letter newLetter = new Letter(newLetterValue);
-                if (!managedNonterminalLetters.contains(newLetter)) {
+                if (!managedNonterminalLetters.contains(newLetter) && !managedTerminalLetters.contains(newLetter)) {
                     managedNonterminalLetters.add(newLetter);
                     return newLetter;
                 }

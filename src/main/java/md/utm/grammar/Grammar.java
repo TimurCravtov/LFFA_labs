@@ -12,18 +12,33 @@ import java.util.stream.Stream;
 public class Grammar {
 
     // non-terminal letters
-    private final Set<Letter> V_N;
+    private Set<Letter> V_N;
 
     // terminal letters
-    private final Set<Letter> V_T;
+    private Set<Letter> V_T;
 
     // productions
-    private final Set<DeriveRule> P;
+    private Set<DeriveRule> P;
 
     // start letter
-    private final Letter S;
+    private Letter S;
     private ChomskyType type;
 
+    public void setV_N(Set<Letter> v_N) {
+        V_N = v_N;
+    }
+
+    public void setV_T(Set<Letter> v_T) {
+        V_T = v_T;
+    }
+
+    public void setP(Set<DeriveRule> p) {
+        P = p;
+    }
+
+    public void setS(Letter s) {
+        S = s;
+    }
 
     public Grammar(Set<Letter> V_N, Set<Letter> V_T, Set<DeriveRule> productions, Letter S) {
 
@@ -232,6 +247,7 @@ public class Grammar {
 
         return new FiniteAutomaton(states, alphabet, delta, S, Set.of(Letter.F));
     }
+
 
     @Override
     public String toString() {

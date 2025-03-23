@@ -1,58 +1,69 @@
 package md.utm.chomsky_normal_form;
 
-import md.utm.finite_automation.ChomskyType;
 import md.utm.grammar.DeriveRule;
 import md.utm.grammar.Grammar;
 import md.utm.grammar.Letter;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CNFService {
 
-    private final Grammar initialGrammar;
-    public CNFService(Grammar grammar) {
-        initialGrammar = grammar;
+    private final Grammar grammar;
+
+    private final VariableFactory variableFactory;
+
+
+    public CNFService(Grammar initialGrammar) {
+
+        // creating copies of the data, so we don't change anything in new grammar
+        Set<Letter> V_N_copy = new HashSet<>(initialGrammar.getV_N());
+        Set<Letter> V_T_copy = new HashSet<>(initialGrammar.getV_T());
+        Set<DeriveRule> P_copy = new HashSet<>(initialGrammar.getP());
+        Letter S_copy = initialGrammar.getS();
+
+        this.grammar = new Grammar(V_N_copy, V_T_copy, P_copy, S_copy);
+
+        this.variableFactory = new VariableFactory(V_T_copy, V_N_copy);
+
     }
 
 
+    public Grammar getGrammar() {
+        return grammar;
+    }
+
+    public String toString() {
+        return grammar.toString();
+    }
+
     public Grammar normalize() {
 
-
-        VariableFactory variableFactory = new VariableFactory(initialGrammar.getV_T(), initialGrammar.getV_N());
-
-        // creating copy of initial grammar units
-        Set<Letter> initialV_T =  Set.copyOf(initialGrammar.getV_T());
-
-        Set<Letter> finalV_T = Set.copyOf(initialGrammar.getV_T());
-        Set<Letter> finalV_N = Set.copyOf(initialGrammar.getV_N());
-        Set<DeriveRule> finalP = new java.util.HashSet<>(Set.copyOf(initialGrammar.getP()));
-        finalP.removeIf(this::isNullTransition);
-
-        // if S is on RHS, adds a transition S0 -> S
-        if (hasSOnRight(initialGrammar.getS(), initialGrammar.getP())) {
-
-            Letter newStart = variableFactory.getNewStartLetter();
-            finalP.add(new DeriveRule(newStart, initialGrammar.getS()));
-        }
+        resolveStartingSymbol();
 
         return null;
+
+    }
+
+    public void resolveStartingSymbol() {
+        if (hasSOnRight(grammar.getS(), grammar.getP())) {
+            Letter newStart = variableFactory.getNewStartLetter();
+            this.grammar.getP().add(new DeriveRule(newStart, grammar.getS()));
+            this.grammar.setS(newStart);
+        }
     }
 
     public Set<DeriveRule> eliminateEpsilonTransitions() {
         Set<Letter> nullables = extractNullables();
 
         // Start with a copy of the original rules, minus ε rules (clean base)
-        Set<DeriveRule> newRules = new HashSet<>(initialGrammar.getP());
+        Set<DeriveRule> newRules = new HashSet<>(grammar.getP());
         newRules.removeIf(this::isNullTransition);
 
         Set<DeriveRule> generatedRules = new HashSet<>();
 
         // Go through all existing rules
-        for (DeriveRule rule : initialGrammar.getP()) {
+        for (DeriveRule rule : grammar.getP()) {
             List<Letter> rhs = rule.getTo();
 
 
@@ -132,12 +143,78 @@ public class CNFService {
         List<Letter> rhs = rule.getTo();
 
         // returns true if sizes of left and right part are 1 and both are non-terminal
-        return lhs.size() == 1 && rhs.size() == 1 && this.initialGrammar.getV_N().containsAll(Set.of(lhs.getFirst(), rhs.getFirst()));
+        return lhs.size() == 1 && rhs.size() == 1 && this.grammar.getV_N().containsAll(Set.of(lhs.getFirst(), rhs.getFirst()));
 
     }
 
     public void eliminateRenamings() {
+        // Start with a copy of the current production rules
+        Set<DeriveRule> newRules = new HashSet<>(grammar.getP());
 
+        // Step 1: Identify all unit productions and build a renaming map
+        Set<DeriveRule> unitRules = newRules.stream()
+                .filter(this::isUnit)
+                .collect(Collectors.toSet());
+
+        // Step 2: Compute the transitive closure of renaming for each non-terminal
+        Map<Letter, Set<Letter>> renamingClosure = new HashMap<>();
+        for (Letter nonTerminal : grammar.getV_N()) {
+            renamingClosure.put(nonTerminal, getRenamingClosure(nonTerminal, unitRules, new HashSet<>()));
+        }
+
+        // Step 3: For each non-terminal, add non-unit productions from all reachable non-terminals
+        Set<DeriveRule> generatedRules = new HashSet<>();
+        for (Letter from : grammar.getV_N()) {
+            Set<Letter> reachable = renamingClosure.get(from);
+            for (Letter to : reachable) {
+                // Find all non-unit productions from 'to'
+                Set<DeriveRule> nonUnitProductions = grammar.getP().stream()
+                        .filter(rule -> rule.getFrom().getFirst().equals(to) && !isUnit(rule))
+                        .collect(Collectors.toSet());
+                // Rewrite them to start from 'from'
+                for (DeriveRule rule : nonUnitProductions) {
+                    generatedRules.add(new DeriveRule(from, rule.getTo()));
+                }
+            }
+        }
+
+        // Step 4: Update the grammar's production rules
+        newRules.removeIf(this::isUnit); // Remove all unit productions
+        newRules.addAll(generatedRules); // Add the new non-unit productions
+
+        // Replace the old rules with the new ones
+        grammar.getP().clear();
+        grammar.getP().addAll(newRules);
+    }
+
+    /**
+     * Recursively compute the set of non-terminals reachable via renaming rules from a given non-terminal.
+     * @param start The starting non-terminal
+     * @param unitRules The set of unit production rules
+     * @param visited Set to track visited non-terminals to avoid infinite recursion in cycles
+     * @return Set of all non-terminals reachable from 'start' via unit productions
+     */
+    private Set<Letter> getRenamingClosure(Letter start, Set<DeriveRule> unitRules, Set<Letter> visited) {
+        Set<Letter> closure = new HashSet<>();
+        closure.add(start); // Include the starting non-terminal
+
+        if (visited.contains(start)) {
+            return closure; // Avoid infinite loops in cycles like A -> B -> C -> A
+        }
+        visited.add(start);
+
+        // Find all unit rules of the form 'start -> X'
+        Set<Letter> directRenamings = unitRules.stream()
+                .filter(rule -> rule.getFrom().getFirst().equals(start))
+                .map(rule -> rule.getTo().getFirst())
+                .collect(Collectors.toSet());
+
+        // Recursively explore each directly reachable non-terminal
+        for (Letter next : directRenamings) {
+            closure.addAll(getRenamingClosure(next, unitRules, new HashSet<>(visited)));
+        }
+
+        return closure;
     }
 
     public void eliminateInaccessible() {
@@ -151,14 +228,14 @@ public class CNFService {
 
 
     public Set<Letter> extractNullables() {
-        Set<Letter> VNcopy = Set.copyOf(initialGrammar.getV_N());
+        Set<Letter> VNcopy = Set.copyOf(grammar.getV_N());
 
         return VNcopy.stream()
                 .filter(letter -> isNullable(
                         letter,
-                        initialGrammar.getP(),
-                        initialGrammar.getV_T(),
-                        initialGrammar.getV_N(),
+                        grammar.getP(),
+                        grammar.getV_T(),
+                        grammar.getV_N(),
                         new HashSet<>()) // New visited set for each letter
                 ).collect(Collectors.toSet());
     }

@@ -18,8 +18,8 @@ public class NormalizationTest {
         Grammar grammar = Variant12GrammarToNormalize.get();
         System.out.println(grammar.getP());
         CNFService cnfService = new CNFService(grammar);
-        System.out.println(cnfService.eliminateEpsilonTransitions());
-
+        cnfService.resolveStartingSymbol();
+        System.out.println(cnfService.getGrammar());
     }
 
 
