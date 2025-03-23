@@ -161,7 +161,7 @@ public class CNFService {
         grammar.getP().addAll(newProductions);
     }
 
-    public void shortify(DeriveRule rule, Set<DeriveRule> returningSet) {
+    private void shortify(DeriveRule rule, Set<DeriveRule> returningSet) {
         if (rule.getTo().size() > 2) {
 
             Letter newLetter = variableFactory.getNextNonterminal();
@@ -303,7 +303,7 @@ public class CNFService {
         return closure;
     }
 
-    public Set<Letter> extractNullables() {
+    private Set<Letter> extractNullables() {
         Set<Letter> VNcopy = Set.copyOf(grammar.getV_N());
 
         return VNcopy.stream()
@@ -316,7 +316,7 @@ public class CNFService {
                 ).collect(Collectors.toSet());
     }
 
-    public boolean isNullable(Letter forCheck,
+    private boolean isNullable(Letter forCheck,
                               Collection<DeriveRule> rules,
                               Set<Letter> VT,
                               Set<Letter> VN,
@@ -354,12 +354,12 @@ public class CNFService {
     }
 
 
-    public boolean hasNullTransition(Collection<DeriveRule> rules) {
+    private boolean hasNullTransition(Collection<DeriveRule> rules) {
 //        rules.forEach(r -> System.out.println("Checking rule: " + r + ", isNull? " + isNullTransition(r)));
         return rules.stream().anyMatch(this::isNullTransition);
     }
 
-    public boolean isNullTransition(DeriveRule deriveRule) {
+    private boolean isNullTransition(DeriveRule deriveRule) {
 
 
         List<Letter> rhs = deriveRule.getTo();
@@ -367,13 +367,13 @@ public class CNFService {
     }
 
 
+    /**
+     * Left public, since used in tests.
+     */
     public boolean hasSOnRight(Letter S, Collection<DeriveRule> rules) {
         return rules.stream().anyMatch(deriveRule -> deriveRule.getTo().contains(S));
     }
 
-    public boolean isUnitTransition(DeriveRule deriveRule, Set<Letter> V_N) {
-        return false;
-    }
 
     public void removeInaccessible() {
         // Step 1: Find all accessible symbols starting from S
