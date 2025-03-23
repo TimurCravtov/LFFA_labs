@@ -11,7 +11,7 @@ public class IntermediateNormalizationTest {
 
     @Test
     public void testSNormalization() {
-        Grammar g = Variant12GrammarToNormalize.get();
+        Grammar g = VariantGrammarToNormalize.get12();
         CNFService cnf = new CNFService(g);
         cnf.resolveStartingSymbol();
 

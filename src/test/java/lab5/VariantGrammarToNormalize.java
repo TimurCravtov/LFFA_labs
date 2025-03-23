@@ -8,8 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Variant12GrammarToNormalize {
-    public static Grammar get() {
+public class VariantGrammarToNormalize {
+    public static Grammar get12() {
 
         // Define non-terminal symbols (VN)
         Letter S = new Letter("S");

@@ -17,7 +17,7 @@ public class NormalizationTest {
 
     @Test
     public void testNormalization() {
-        Grammar grammar = Variant12GrammarToNormalize.get15();
+        Grammar grammar = VariantGrammarToNormalize.get15();
         CNFService cnfService = new CNFService(grammar);
         cnfService.normalize();
         System.out.println(cnfService);
@@ -25,7 +25,7 @@ public class NormalizationTest {
 
     @Test
     public void textWithReasoning() {
-        Grammar grammar = Variant12GrammarToNormalize.get15();
+        Grammar grammar = VariantGrammarToNormalize.get15();
 //        Grammar grammar = getGrammar();
 
         System.out.println(colorize("Initial grammar:", CYAN));

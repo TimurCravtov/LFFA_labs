@@ -186,10 +186,12 @@ In the image below, below, $W, X, Y, Z$ are also grouped into one, since it requ
 
 ### Conclusions
 
+During this laboratory work, I got familiar with Context-free Grammar and Chomsky Normal Form. I successfully implemented a converter of simple CFG to CNF. Current implementation allows working with different Grammars, since it was made as generic as possible (as always). It was tested on variant 12 and 15, both are available as static methods of class `VariantsGrammarToNormalize`
+
 ## References
 
 [^1]: Lecture Notes
 
-[^2]: Clemson univesity, Chomsky normal form. https://people.computing.clemson.edu/~goddard/texts/theoryOfComputation/9a.pdf
+[^2]: Clemson university, Chomsky normal form. https://people.computing.clemson.edu/~goddard/texts/theoryOfComputation/9a.pdf
 
 [^3]: Wikipedia. Chomsky normal form. https://en.wikipedia.org/wiki/Chomsky_normal_form
