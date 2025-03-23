@@ -42,13 +42,13 @@ public class VariableFactory {
     }
 
     public Letter getNewStartLetter() {
-        if (!managedNonterminalLetters.contains(new Letter("S0"))) {
-            Letter newStartLetter = new Letter("S0");
+        if (!managedNonterminalLetters.contains(new Letter("S₀"))) {
+            Letter newStartLetter = new Letter("S₀");
             managedNonterminalLetters.add(newStartLetter);
             return newStartLetter;
         }
         else throw new RuntimeException(
-                "S0 already exists. You’re not supposed to have a state called S0 because it's typically reserved as the new start state during normalization or automata transformations. " +
+                "S₀ already exists. You’re not supposed to have a state called S0 because it's typically reserved as the new start state during normalization or automata transformations. " +
                         "Having it already defined risks breaking the construction process, leading to ambiguous behaviors or invalid automata. " +
                         "Seriously, what were you thinking? Were you trying to speedrun breaking my algorithm, or is chaos just your coding style?"
         );

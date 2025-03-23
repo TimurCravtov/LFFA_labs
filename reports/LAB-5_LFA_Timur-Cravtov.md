@@ -8,20 +8,26 @@
 
 ## Theory
 
-Regular expressions [^1] is an algebraic description of Finite Automata. 
+Chomsky Normal Form is a special form of Grammar where all the rules are in one of the following format: 
 
-Regular expression over and alphabet is an expression which is formed using following rules:
+1) _A -> BC_
+2) _S -> ε_, if S is the starting symbol
+3) _A -> a_
 
-1) The empty set and epsilon are regular expression
-2) Every symbol in alphabet is regular expression
-3) If *R* and *S* are regular expressions, so are *R + S*, *RS* and *R**
+Chomsky Normal Form is usually used to simplify Context Free Grammar (Type 2, CFG). The key advantage is that in Chomsky Normal
+Form, every derivation of a string of n letters has
+exactly 2n − 1 steps [^2].
 
-Regular expressions have different applications:
+Here is the steps of converting a Grammar to Chomsky Normal Form:
 
-1) In Science of Finite Automata it is used to determine whether the language is regular. So, if we can find a Regular expression for the language, it can be classified as regular, and DFA or NFA can be created based on it.
-2) In real-word applications, Regex are used for pattern matching within a string. For instance, in validation of user emails in form `username@exaple.org`. In previous laboratory work [^2], Regexes were used for tokenization, determining its type based on the regex there are matched (`TIME_PATTERN`, `DATE_PATTERN`, etc)
-3) Also regex are powerful tool in string search, not only validating it. 
-4) Regex [^3] matchers are available in any major programming languages, suggesting its application in different areas.
+0) If *S* symbol is met in RHS, then we create a new starting state (typically called *S0*) and make a transition *S0 -> S*.
+
+1) Eliminate ε-transitions. In case there is A -> ε, it is considered a nullable. if a non-terminal in RHS has all the letters nullable, it is nullable as well (E.g. if in *B -> ACDE*, *A*, *C*, *D*, *E* are nullables, B is nullable). When nullables is defined, in each production in form *A -> BCDaE*, we add a set of all possible productions, where the nullable is absent. E.g.: if *B* and *D* and *E* are nullable, then we create a 2<sup>3</sup> new productions: B -> BCaE | BCDa | CDaE | CDa | ... | Ca.
+2) Eliminate Unit productions. For all productions if form *A -> B*, replace this production in *A -> {set of production (except unit) of the grammar with B in LHS}*
+3) Split long productions. If we have *A -> bCD*, replace it with *A -> bE* \*, and add production *E -> CD*
+4) After the 3rd step, only production which needs fix are *A -> bC*. Replace them with *A -> BC* and add *B -> b*
+
+\* Of course, if the letter E or other is already used in the Grammar, need to replace it with some unique one. In the lab, `VariableFactory` class serves this purpose.
 
 ## Objectives:
 
@@ -151,6 +157,4 @@ During this laboratory work, I implemented a random regex string generation, It 
 
 [^1]: Lecture Notes
 
-[^2]: LAB-3_LFA_Timur-Cravtov.md
-
-[^3]: Java Regex - https://www.w3schools.com/java/java_regex.asp
+[^2]: Clemson univesity, Chomsky normal form. https://people.computing.clemson.edu/~goddard/texts/theoryOfComputation/9a.pdf

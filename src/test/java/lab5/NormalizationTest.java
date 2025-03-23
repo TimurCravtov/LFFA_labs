@@ -10,18 +10,42 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static md.utm.utils.ColorManager.*;
+
 public class NormalizationTest {
 
 
     @Test
     public void testNormalization() {
         Grammar grammar = Variant12GrammarToNormalize.get();
+
         System.out.println(grammar.getP());
         CNFService cnfService = new CNFService(grammar);
         cnfService.resolveStartingSymbol();
         System.out.println(cnfService.getGrammar());
     }
 
+    @Test
+    public void textWithoutWords() {
+        Grammar grammar = Variant12GrammarToNormalize.get();
+        System.out.println(colorize("Initial grammar:", CYAN));
+        System.out.println(grammar);
+
+        CNFService cnfService = new CNFService(grammar);
+
+        System.out.println(colorize("Grammar after resolving S rule: ", YELLOW));
+        cnfService.resolveStartingSymbol();
+        System.out.println(cnfService.getGrammar());
+
+        System.out.println(colorize("Grammar after eliminating epsilon transitions: ", RED));
+        cnfService.eliminateEpsilonTransitions();
+        System.out.println(cnfService.getGrammar());
+
+        System.out.println(colorize("Grammar after eliminating renamings: ", BLUE));
+        cnfService.eliminateRenamings();
+        System.out.println(cnfService.getGrammar());
+
+    }
 
     public Grammar getGrammar() {
         Letter S = new Letter("S");

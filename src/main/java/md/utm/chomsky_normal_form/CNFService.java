@@ -40,16 +40,22 @@ public class CNFService {
     public Grammar normalize() {
 
         resolveStartingSymbol();
+        eliminateEpsilonTransitions();
+        eliminateRenamings();
 
-        return null;
+        return this.grammar;
 
     }
 
+    /**
+     * If S is met in right side of production (E.g. A -> balbeS), then we create a new rule (S0 -> S), and set S0 as new S.
+     */
     public void resolveStartingSymbol() {
         if (hasSOnRight(grammar.getS(), grammar.getP())) {
             Letter newStart = variableFactory.getNewStartLetter();
             this.grammar.getP().add(new DeriveRule(newStart, grammar.getS()));
             this.grammar.setS(newStart);
+            this.grammar.getV_N().add(newStart);
         }
     }
 
@@ -90,7 +96,7 @@ public class CNFService {
 
         // Combine the rules: original (without ε) + generated
         newRules.addAll(generatedRules);
-
+        this.grammar.setP(newRules);
         return newRules;
     }
 

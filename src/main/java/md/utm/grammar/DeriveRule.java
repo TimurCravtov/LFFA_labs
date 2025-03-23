@@ -11,6 +11,19 @@ public class DeriveRule {
         this.to = List.copyOf(to);
     }
 
+    @Override
+    public int hashCode() {
+        return from.hashCode() + to.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DeriveRule other) {
+            return from.equals(other.from) && to.equals(other.to);
+        }
+        return false;
+    }
+
     public DeriveRule(Letter from, Letter to) {
         this.from = List.of(from);
         this.to = List.of(to);
