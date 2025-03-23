@@ -132,7 +132,7 @@ The image below [^3] demonstrates the relations between method call order and de
 
 <img src="screenshots/lab5/transformation_order.png">
 
-One can see, that there is some restrictions on order of operations. In current work implementation, all the intermediate transformation methods were mede `public` for testing purpose only. Each changes the `grammar` reference inside `CNFService` class. For general purpose, `normalize()` method of `CNFService`  is developed, where the mentioned methods (transformations) are called in one the accepted orders.
+One can see, that there is some restrictions on order of operations. In current work implementation, all the intermediate transformation methods were mede `public` for testing purpose only. Each changes the `grammar` reference inside `CNFService` class. So in `@Test` method, I manually call the methods in right order. For general purpose, `normalize()` method of `CNFService`  is developed, where the mentioned methods (transformations) are called in one the accepted orders.
 
 ## Conclusions / Screenshots / Results
 
@@ -147,10 +147,42 @@ The 12th variant grammar:
 
 <img src="screenshots/lab5/1.png">
 
-2) As one can notice, there are multiple productions which have *S* in RHS (E.g. *A -> aS*). Hence, we create a rule $S_0\rightarrow  S$, and add $S_0$ in $V_n$
+2) As one can notice, there are multiple productions which have *S* in RHS (E.g. *A -> aS*). Hence, we create a rule $S_0\rightarrow  S$, and add $S_0$ in $V_N$
 
 <img src="screenshots/lab5/2.png">
 
+3. In third step, we remove inaccessible (unreachable from S) states. From  image below we see that D dissapearred, since we don't have any rule which can lead to D.
+
+<img src="screenshots/lab5/3.png">
+
+4) Next, we remove $\varepsilon$-transitions. One of such is $A \rightarrow \varepsilon$. Since $A$ is nullable, in all the places where $A$ is present, we add a new rule where $A$ is absent. E.g: Since we had $S \rightarrow aA$, we add another rule $S \rightarrow a$
+
+
+<img src="screenshots/lab5/4.png">
+
+5Remove renamings. In other words, we replace all $A \rightarrow B$ with rules $A \rightarrow \{\text{all rules of B}\} $. In this example. We replace $S \rightarrow B$ with $\{S \rightarrow bS, S\rightarrow a\}$. (Rule $S\rightarrow a$), already existed, so adding only the first.
+
+<img src="screenshots/lab5/5.png">
+
+6) Make transition shorter. The long transitions (with 3 or more letters in RHS) are split into several. E.g: In previous step we had $A \rightarrow Bab$. In image below, we see a new rule for $A$: $A \rightarrow BZ$, and a rule which explains the added additional letter: $Z \rightarrow ab$. Obviously, $A \rightarrow BZ$ = $A \rightarrow Bab$. 
+
+<img src="screenshots/lab5/6.png">
+
+
+7) The final algorithmic rule - replacing non-terminal symbols in rules with 2 letters in RHS with a non-terminal, with an intermediate step of transformation to terminal. E.g: In step below we had $Y \rightarrow bC$. It is transformed to $Y \rightarrow U_1C$. As expected, there is a rule $U_1 \rightarrow B$.
+
+<img src="screenshots/lab5/7.png">
+
+8) Final step is simplifying repetitions. People who can count up to 2 can notice, that there are state in which you get to same outcome state, there are many of them in one-letter rules. E.g. $P \rightarrow a$, $Q \rightarrow a$, etc. All the repeating states are grouped, just one is picked, and replaced in all the occurrences. E.g. We had multiple rules $... \rightarrow a$. The *reprezentative* of this group was picked $Q$. We used to have a rule $S_0 \rightarrow PA$. It got replaced, as shown in image below, to $S \rightarrow QA$. Final result is way shorter.
+
+
+<img src="screenshots/lab5/8.png">
+
+> Note: method `removeRepetitions()` can be called multiple times. 
+
+In the image below, below, $W, X, Y, Z$ are also grouped into one, since it required one more iteration. The `normalize()` function uses `removeAllRepetitions()` which performs these iteration until it's no longer possible to simplify the expression. 
+
+<img src="screenshots/lab5/9.png">
 
 ### Conclusions
 

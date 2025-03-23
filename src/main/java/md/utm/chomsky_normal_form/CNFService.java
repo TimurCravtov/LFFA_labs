@@ -45,7 +45,7 @@ public class CNFService {
         eliminateRenamings();
         replaceLongProductions();
         replaceTerminalsWithIntermediate();
-        removeRepetitions();
+        removeAllRepetitions();
 
         return this.grammar;
 
@@ -433,6 +433,17 @@ public class CNFService {
         }
     }
 
+
+    public void removeAllRepetitions() {
+
+        int productionCount = grammar.getP().size();
+        removeRepetitions();
+
+        while (grammar.getP().size() < productionCount) {
+            productionCount = grammar.getP().size();
+            removeRepetitions();
+        }
+    }
 
     public void removeRepetitions() {
         // Step 1: Map each non-terminal to its set of productions

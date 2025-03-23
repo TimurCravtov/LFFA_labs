@@ -17,7 +17,7 @@ public class NormalizationTest {
 
     @Test
     public void testNormalization() {
-        Grammar grammar = Variant12GrammarToNormalize.get();
+        Grammar grammar = Variant12GrammarToNormalize.get15();
         CNFService cnfService = new CNFService(grammar);
         cnfService.normalize();
         System.out.println(cnfService);
@@ -57,11 +57,11 @@ public class NormalizationTest {
         cnfService.replaceTerminalsWithIntermediate();
         System.out.println(cnfService.getGrammar());
 
-
-
         System.out.println(colorize("Grammar after removing repetitions", BLUE));
         cnfService.removeRepetitions();
+        cnfService.removeRepetitions();
         System.out.println(cnfService.getGrammar());
+
 
     }
 
