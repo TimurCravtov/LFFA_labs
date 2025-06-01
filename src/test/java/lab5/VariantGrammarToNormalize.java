@@ -93,7 +93,7 @@ public class VariantGrammarToNormalize {
         productions.add(new DeriveRule(S, List.of(A, C)));
 
         // 2. S → BA
-        productions.add(new DeriveRule(S, List.of(B, A)));
+        productions.add(new DeriveRule(S, List.of(b, A)));
 
         // 3. S → B
         productions.add(new DeriveRule(S, List.of(B)));

@@ -9,32 +9,16 @@ new event "empty the dishwasher" at 18:30 for 10m;
 new event "Buy mum gif" on 8 March 2025 at 15:50 for 1h
 
 // Pomodoro sessions (not automatically exported)
-
-pomodoro "LAB" at 14:30 repeat 4 times;
-pomodoro "LAB2" at 18:30 repeat 5 times every 30m with 10m pause;
+p = pomodoro "LAB" at 14:30 repeat 4 times;
 
 // Flexible event scheduling (manual export required)
 me = meeting = event "meeting" on Friday find between 10:00 and 15:00;
-re = event "Reading" daily at 21:00 for 2h 10m;
 
 include me, re in "general";
-
-// Start week calculation
-start_week_number = weeknumber(2025.02.03);
-
-// Different loop types
-iterate weeks from start_week_number to +26 {  
-    new event "Weekly Report" every Monday at 9:00 for 1h;  
-}
-
-iterate days from 2025.03.01 to 2025.03.10 step 2 {  
-    new event "Gym Session" at 07:00 for 1h;  
-}
 
 // Include an event in another calendar
 include find_gift in orar;
 
-// .ics file management
 merge orar, personal into merged_calendar;
 filter merged_calendar where category >< "work" into personal_only;
 filter merged_calendar where category == "meeting" into meetings_only;

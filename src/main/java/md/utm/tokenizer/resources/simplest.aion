@@ -1,0 +1,6 @@
+new event "Visit World Trade Center" at 8:46 on 9.11.2001;
+new event "Visit World Trade Center" at 8:46 on 9.11.2001;
+
+import "faf-231-schedule" as faf231;
+merge orar, personal into merged_calendar;
+export merged_calendar as "full_schedule";

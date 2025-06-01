@@ -4,7 +4,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import md.utm.utils.ContainsIgnoreCaseKt;
+import md.utm.utils.StringUtils;
+import md.utm.utils.StringUtils.*;
 
 public class AionLexer {
 
@@ -44,7 +45,8 @@ public class AionLexer {
 
     private static final Set<String> COMPARISON_OPERATORS = Set.of("==", "!=", "><", ">", "<", ">=", "<=");
     private static final Pattern TIME_PATTERN = Pattern.compile("\\d{1,2}:\\d{2}(?=[^a-zA-Z0-9_]|$)");
-    private static final Pattern DATE_PATTERN = Pattern.compile("\\d{4}.\\d{1,2}.\\d{1,2}(?=[^a-zA-Z0-9_]|$)");
+    private static final Pattern DATE_PATTERN =
+            Pattern.compile("\\d+\\.\\d+(\\.\\d+)?(?=[^a-zA-Z0-9_]|$)");
 
     private static final Pattern STRING_PATTERN = Pattern.compile("\"([^\"]*)\"(?=[^a-zA-Z0-9_]|$)");
     private static final Pattern PERIOD_PATTERN = Pattern.compile("\\d+([hmdwy])(?=[^a-zA-Z0-9_]|$)");
@@ -134,11 +136,11 @@ public class AionLexer {
                     tokens.add(new Token(TokenType.KEYWORD, word, pos));
 
                 // if word is day of week
-                } else if (DAYS_OF_WEEK_VARIATIONS.values().stream().anyMatch(set -> ContainsIgnoreCaseKt.containsIgnoreCase(set, word))) {
+                } else if (DAYS_OF_WEEK_VARIATIONS.values().stream().anyMatch(set -> StringUtils.containsIgnoreCase(set, word))) {
                     tokens.add(new Token(TokenType.DAY_OF_WEEK, word, pos));
 
                 // if word is month
-                } else if (MONTHS_VARIATIONS.values().stream().anyMatch(set -> ContainsIgnoreCaseKt.containsIgnoreCase(set, word))) {
+                } else if (MONTHS_VARIATIONS.values().stream().anyMatch(set -> StringUtils.containsIgnoreCase(set, word))) {
                     tokens.add(new Token(TokenType.MONTH, word, pos));
 
                 // if word is repeaters words (like daily, monthly, etc.)

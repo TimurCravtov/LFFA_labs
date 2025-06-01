@@ -15,7 +15,7 @@ public class LexerTest {
     @Test
     public void testSample() {
 
-        String sampleInput = read("D:\\src\\utm\\tasks\\lfa\\labs\\src\\main\\java\\md\\utm\\lab3\\resources\\sample.aion");
+        String sampleInput = read("D:\\src\\utm\\tasks\\lfa\\labs\\src\\main\\java\\md\\utm\\tokenizer\\resources\\sample.aion");
         List<Token> tokens = tokenize(sampleInput);
         TokenStreamVisualizer.visualize(tokens);
         System.out.println();
