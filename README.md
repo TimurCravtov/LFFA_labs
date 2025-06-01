@@ -11,7 +11,7 @@ The list of all reports are available at [reports folder](reports). The links be
 3) [lab #3](reports/LAB-3_LFA_Timur-Cravtov.md) - Lexer & Scanner.
 4) [lab #4](reports/LAB-4_LFA_Timur-Cravtov.md) - Regex
 5) [lab #5](reports/LAB-5_LFA_Timur-Cravtov.md) - Chomsky Normal Form
-6[lab #6](reports/LAB-6_LFA_Timur-Cravtov.md) - Building an AST
+6) [lab #6](reports/LAB-6_LFA_Timur-Cravtov.md) - Building an AST
 
 ### Author
 Timur Cravtov  
